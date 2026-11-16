@@ -1,498 +1,979 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import {
-  motion,
-  AnimatePresence
-} from 'motion/react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence, useScroll, useSpring, useMotionValue } from 'motion/react';
 import {
   Globe2,
-  Search,
-  Bookmark,
+  Snowflake,
+  Waves,
+  Trees,
+  Languages,
   Menu,
   X,
+  ExternalLink,
+  ArrowRight,
+  ArrowUp,
+  Check,
+  Send,
+  BookOpen,
+  Activity,
+  Clock,
   Sparkles,
-  MapPin,
-  HeartHandshake,
-  Compass
+  Play,
+  Pause,
 } from 'lucide-react';
-import {
-  HERO_SLIDES,
-  SPECIES_DATA,
-  NATIONAL_PARKS,
-  DONATION_CAMPAIGNS,
-  INITIAL_DONORS
-} from './data/conservationData';
-import HeroSlider from './components/HeroSlider';
-import AboutSection from './components/AboutSection';
-import ArticleGallerySection from './components/ArticleGallerySection';
-import SpeciesFanDeck from './components/SpeciesFanDeck';
-import ParkJournalBook from './components/ParkJournalBook';
-import ContactSection from './components/ContactSection';
-import DonationPage from './components/DonationPage';
-import OrigamiFaunaLayer from './components/OrigamiFaunaLayer';
+import { UI, HERO, ABOUT, CLIMATE, OCEAN, FOREST, ACTION } from './data/content';
+import HeroSection from './components/HeroSection';
+import AboutPopUpBook from './components/AboutPopUpBook';
+import SceneStage from './components/SceneStage';
+import { LineChart, GlacierCompare } from './components/Charts';
+import PlasticQuiz from './components/PlasticQuiz';
+import ForestFanDeck from './components/ForestFanDeck';
+import MarineCreatureMap from './components/MarineCreatureMap';
+import { VectorArt } from './components/VectorArt';
+import { ScrollReveal } from './components/ScrollChoreo';
 
-const EXPO_EASE = [0.16, 1, 0.3, 1];
+const SECTIONS = ['home', 'about', 'climate', 'ocean', 'forest', 'action'];
+const fade = { initial: { opacity: 0, y: 24 }, whileInView: { opacity: 1, y: 0 } };
+
+function Chapter({ id, data, lang, children }) {
+  return (
+    <section id={id} className={`chapter ch-${id}`}>
+      <div className="container">
+        <ScrollReveal as="header" fromX={-36} fromY={48} className="chapter-head">
+          <span className="kicker">{data.kicker[lang]}</span>
+          <h2>{data.title[lang]}</h2>
+          <p>{data.intro[lang]}</p>
+        </ScrollReveal>
+        {children}
+        <ScrollReveal fromY={28} className="src-bar">
+          <BookOpen size={14} />
+          <span>{UI.sources[lang]}: {data.sources}</span>
+        </ScrollReveal>
+      </div>
+    </section>
+  );
+}
+
+const STAT_ICONS = [Activity, Clock, Sparkles];
+const FLOW_COLORS = ['#0ea5e9', '#06b6d4', '#22c55e', '#f59e0b', '#f97316'];
+
+function Stats({ items, lang }) {
+  return (
+    <div className="stats">
+      {items.map((s, idx) => {
+        const Icon = STAT_ICONS[idx % STAT_ICONS.length];
+        return (
+          <ScrollReveal
+            key={s.v}
+            fromX={(idx - 1) * 32}
+            fromY={56 + idx * 14}
+            className="stat"
+          >
+            <div className="stat-fold" aria-hidden="true" />
+            <div className="stat-top">
+              <span className="stat-num-tag">0{idx + 1}</span>
+              <span className="stat-icon-badge" aria-hidden="true">
+                <Icon size={16} />
+              </span>
+            </div>
+            <strong>{s.v}</strong>
+            <span>{s.t[lang]}</span>
+            <motion.div
+              className="stat-meter"
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={{ once: false, amount: 0.4 }}
+              transition={{ duration: 0.75, delay: idx * 0.12, ease: 'easeOut' }}
+            />
+          </ScrollReveal>
+        );
+      })}
+    </div>
+  );
+}
+
+const CANOPY_COLORS = ['#16a34a', '#22c55e', '#eab308', '#f97316'];
+
+function MicroStepVisual({ step, active }) {
+  return (
+    <div className={`flow-step-visual ${active ? 'is-active' : ''}`} aria-hidden="true">
+      <svg viewBox="0 0 120 68" className="flow-step-svg">
+        <rect width="120" height="68" rx="10" fill={active ? '#e0f2fe' : '#f8fafc'} />
+        <path d="M0,46 Q30,38 60,46 T120,46 L120,68 L0,68 Z" fill="rgba(14,165,233,0.14)" />
+        {step === 0 && (
+          <motion.g
+            animate={{ y: active ? [-3, 2, -3] : 0, rotate: active ? [-3, 3, -3] : 0 }}
+            transition={{ duration: 2.2, repeat: active ? Infinity : 0, ease: 'easeInOut' }}
+          >
+            <polygon points="34,20 48,20 51,30 51,52 31,52 31,30" fill="#38bdf8" stroke="#0284c7" strokeWidth="1.4" />
+            <rect x="37" y="14" width="8" height="6" rx="1.5" fill="#0284c7" />
+            <polygon points="62,24 84,27 80,52 59,49" fill="#facc15" opacity="0.9" stroke="#eab308" strokeWidth="1.3" />
+          </motion.g>
+        )}
+        {step === 1 && (
+          <g>
+            <polygon points="34,12 40,18 48,16 45,24 52,29 43,31 40,39 35,31 26,29 33,24 30,16" fill="#facc15" />
+            {[
+              [62, 34, '#0ea5e9'],
+              [74, 44, '#f97316'],
+              [84, 28, '#22c55e'],
+              [94, 42, '#ef4444'],
+              [68, 50, '#eab308'],
+            ].map(([px, py, pc], idx) => (
+              <motion.polygon
+                key={idx}
+                points={`${px},${py - 4} ${px + 5},${py + 2} ${px - 2},${py + 5}`}
+                fill={pc}
+                animate={{ y: active ? [0, -4, 0] : 0 }}
+                transition={{ duration: 1.2, delay: idx * 0.12, repeat: active ? Infinity : 0 }}
+              />
+            ))}
+          </g>
+        )}
+        {step === 2 && (
+          <motion.g
+            animate={{ x: active ? [-4, 4, -4] : 0 }}
+            transition={{ duration: 2, repeat: active ? Infinity : 0, ease: 'easeInOut' }}
+          >
+            <ellipse cx="64" cy="36" rx="22" ry="12" fill="#22c55e" opacity="0.88" />
+            <polygon points="42,36 26,26 30,46" fill="#16a34a" />
+            <circle cx="68" cy="35" r="3.2" fill="#f97316" />
+            <circle cx="58" cy="38" r="2.6" fill="#facc15" />
+          </motion.g>
+        )}
+        {step === 3 && (
+          <motion.g
+            animate={{ x: active ? [-4, 5, -4] : 0 }}
+            transition={{ duration: 2, repeat: active ? Infinity : 0, ease: 'easeInOut' }}
+          >
+            <polygon points="40,36 70,18 96,36 70,54" fill="#f59e0b" />
+            <polygon points="40,36 22,23 28,36 22,49" fill="#ea580c" />
+            <circle cx="83" cy="32" r="2.2" fill="#0f2438" />
+            <circle cx="67" cy="38" r="3" fill="#ef4444" />
+            <circle cx="57" cy="34" r="2.4" fill="#0ea5e9" />
+          </motion.g>
+        )}
+        {step === 4 && (
+          <motion.g
+            animate={{ scale: active ? [1, 1.05, 1] : 1 }}
+            transition={{ duration: 1.6, repeat: active ? Infinity : 0, ease: 'easeInOut' }}
+          >
+            <ellipse cx="60" cy="40" rx="34" ry="16" fill="#ffffff" stroke="#cbd5e1" strokeWidth="2" />
+            <ellipse cx="60" cy="40" rx="24" ry="10" fill="#fff7ed" stroke="#fed7aa" strokeWidth="1.2" />
+            <polygon points="44,40 62,32 78,40 62,48" fill="#f97316" />
+            <circle cx="58" cy="39" r="2.4" fill="#0ea5e9" />
+            <circle cx="66" cy="41" r="2.1" fill="#ef4444" />
+          </motion.g>
+        )}
+      </svg>
+    </div>
+  );
+}
+
+function Flow({ title, steps, lang, variant = 'zigzag' }) {
+  const [activeIdx, setActiveIdx] = useState(0);
+  const [playing, setPlaying] = useState(false);
+
+  useEffect(() => {
+    if (!playing) return undefined;
+    const timer = setInterval(() => {
+      setActiveIdx((prev) => {
+        if (prev >= steps.length - 1) {
+          setPlaying(false);
+          return prev;
+        }
+        return prev + 1;
+      });
+    }, 950);
+    return () => clearInterval(timer);
+  }, [playing, steps.length]);
+
+  const progressPct = steps.length > 1 ? (activeIdx / (steps.length - 1)) * 100 : 100;
+  const palette = variant === 'canopy' ? CANOPY_COLORS : FLOW_COLORS;
+
+  return (
+    <ScrollReveal fromY={58} className={`flow flow-${variant}`}>
+      <div className="flow-header">
+        <div>
+          <h3>{title[lang]}</h3>
+          <p className="flow-sub">
+            {lang === 'id'
+              ? 'Klik setiap tahap untuk menelusuri alur dampaknya'
+              : 'Click any stage to trace the impact pathway'}
+          </p>
+        </div>
+        <button
+          type="button"
+          className={`flow-play-btn ${playing ? 'on' : ''}`}
+          onClick={() => {
+            if (!playing && activeIdx >= steps.length - 1) setActiveIdx(0);
+            setPlaying((p) => !p);
+          }}
+        >
+          {playing ? <Pause size={13} /> : <Play size={13} />}
+          <span>
+            {playing
+              ? (lang === 'id' ? 'Jeda' : 'Pause')
+              : (lang === 'id' ? 'Putar Alur' : 'Play Flow')}
+          </span>
+        </button>
+      </div>
+
+      {variant === 'canopy' ? (
+        <div className="flow-domino-wrap">
+          <div className="flow-domino-col">
+            {[0, 2].map((idx) => {
+              const s = steps[idx];
+              if (!s) return null;
+              const stepColor = palette[idx % palette.length];
+              const isActive = idx === activeIdx;
+              const isPassed = idx <= activeIdx;
+              return (
+                <div
+                  key={s.en}
+                  role="button"
+                  tabIndex={0}
+                  className={`flow-domino-card ${isActive ? 'is-active' : ''} ${isPassed ? 'is-passed' : ''}`}
+                  style={{ '--step-color': stepColor }}
+                  onClick={() => {
+                    setPlaying(false);
+                    setActiveIdx(idx);
+                  }}
+                  onMouseEnter={() => {
+                    if (!playing) setActiveIdx(idx);
+                  }}
+                  onKeyDown={(e) => e.key === 'Enter' && setActiveIdx(idx)}
+                >
+                  <div className="flow-canopy-head">
+                    <span className="flow-node">{String(idx + 1).padStart(2, '0')}</span>
+                    <span className="flow-stage-label">
+                      {lang === 'id' ? `Domino ${idx + 1}` : `Domino ${idx + 1}`}
+                    </span>
+                  </div>
+                  <p className="flow-step-text">{s[lang]}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Hub Pohon Origami Tengah yang Bereaksi Sesuai Tahap Deforestasi */}
+          <div className="flow-domino-hub" aria-hidden="true">
+            <svg viewBox="0 0 220 220" className="flow-domino-svg">
+              {/* Garis cabang ke 4 kartu */}
+              <path d="M 110 110 L 18 52" stroke={activeIdx >= 0 ? '#16a34a' : 'rgba(15,36,56,0.14)'} strokeWidth="3" strokeDasharray="5 5" />
+              <path d="M 110 110 L 202 52" stroke={activeIdx >= 1 ? '#eab308' : 'rgba(15,36,56,0.14)'} strokeWidth="3" strokeDasharray="5 5" />
+              <path d="M 110 110 L 18 168" stroke={activeIdx >= 2 ? '#f59e0b' : 'rgba(15,36,56,0.14)'} strokeWidth="3" strokeDasharray="5 5" />
+              <path d="M 110 110 L 202 168" stroke={activeIdx >= 3 ? '#f97316' : 'rgba(15,36,56,0.14)'} strokeWidth="3" strokeDasharray="5 5" />
+
+              {/* Lingkaran dasar tanah (berubah dari hijau ke kering oranye di tahap 4) */}
+              <circle
+                cx="110"
+                cy="110"
+                r="66"
+                fill={activeIdx >= 3 ? '#fff7ed' : '#f0fdf4'}
+                stroke={palette[activeIdx % palette.length]}
+                strokeWidth="2.5"
+              />
+
+              {/* Asap karbon naik di tahap >= 1 */}
+              {activeIdx >= 1 && (
+                <g opacity="0.8">
+                  <polygon points="88,46 96,34 104,46 96,56" fill="#94a3b8" className="anim-smoke-1" />
+                  <polygon points="122,40 130,28 138,40 130,50" fill="#cbd5e1" className="anim-smoke-1" />
+                </g>
+              )}
+
+              {/* Batang pohon origami */}
+              <polygon points="103,154 117,154 114,108 106,108" fill="#7c2d12" />
+
+              {/* Kanopi pohon (terbelah/memudar saat tahap >= 2) */}
+              <motion.g
+                animate={{ x: activeIdx >= 2 ? -8 : 0, rotate: activeIdx >= 2 ? -5 : 0 }}
+                transition={{ type: 'spring', stiffness: 220, damping: 20 }}
+              >
+                <polygon points="110,48 70,116 110,116" fill={activeIdx >= 3 ? '#facc15' : '#22c55e'} />
+              </motion.g>
+              <motion.g
+                animate={{ x: activeIdx >= 2 ? 8 : 0, rotate: activeIdx >= 2 ? 5 : 0 }}
+                transition={{ type: 'spring', stiffness: 220, damping: 20 }}
+              >
+                <polygon points="110,48 150,116 110,116" fill={activeIdx >= 3 ? '#f97316' : '#15803d'} />
+              </motion.g>
+
+              {/* Retak/kering tanah di tahap 4 */}
+              {activeIdx >= 3 && (
+                <path d="M 74 156 L 96 150 L 114 158 L 146 152" fill="none" stroke="#ea580c" strokeWidth="2.5" strokeLinecap="round" />
+              )}
+            </svg>
+            <span className="flow-hub-caption" style={{ color: palette[activeIdx % palette.length] }}>
+              {lang === 'id' ? `Efek ${activeIdx + 1} / ${steps.length}` : `Effect ${activeIdx + 1} / ${steps.length}`}
+            </span>
+          </div>
+
+          <div className="flow-domino-col">
+            {[1, 3].map((idx) => {
+              const s = steps[idx];
+              if (!s) return null;
+              const stepColor = palette[idx % palette.length];
+              const isActive = idx === activeIdx;
+              const isPassed = idx <= activeIdx;
+              return (
+                <div
+                  key={s.en}
+                  role="button"
+                  tabIndex={0}
+                  className={`flow-domino-card ${isActive ? 'is-active' : ''} ${isPassed ? 'is-passed' : ''}`}
+                  style={{ '--step-color': stepColor }}
+                  onClick={() => {
+                    setPlaying(false);
+                    setActiveIdx(idx);
+                  }}
+                  onMouseEnter={() => {
+                    if (!playing) setActiveIdx(idx);
+                  }}
+                  onKeyDown={(e) => e.key === 'Enter' && setActiveIdx(idx)}
+                >
+                  <div className="flow-canopy-head">
+                    <span className="flow-node">{String(idx + 1).padStart(2, '0')}</span>
+                    <span className="flow-stage-label">
+                      {lang === 'id' ? `Domino ${idx + 1}` : `Domino ${idx + 1}`}
+                    </span>
+                  </div>
+                  <p className="flow-step-text">{s[lang]}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        <div className="flow-pipeline">
+          {/* Garis penghubung zigzag SVG */}
+          <svg viewBox="0 0 1000 180" preserveAspectRatio="none" className="flow-zigzag-svg" aria-hidden="true">
+            <path
+              d="M 100 32 L 300 112 L 500 32 L 700 112 L 900 32"
+              fill="none"
+              stroke="rgba(15, 36, 56, 0.14)"
+              strokeWidth="4"
+              strokeDasharray="8 8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <motion.path
+              d="M 100 32 L 300 112 L 500 32 L 700 112 L 900 32"
+              fill="none"
+              stroke="url(#flowZigGrad)"
+              strokeWidth="4.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: progressPct / 100 }}
+              transition={{ type: 'spring', stiffness: 180, damping: 24 }}
+            />
+            <defs>
+              <linearGradient id="flowZigGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#0ea5e9" />
+                <stop offset="50%" stopColor="#22c55e" />
+                <stop offset="100%" stopColor="#f97316" />
+              </linearGradient>
+            </defs>
+          </svg>
+
+          <ol>
+            {steps.map((s, i) => {
+              const stepColor = palette[i % palette.length];
+              const isActive = i === activeIdx;
+              const isPassed = i <= activeIdx;
+              return (
+                <li
+                  key={s.en}
+                  className={`flow-step ${i % 2 === 1 ? 'is-down' : 'is-up'} ${isActive ? 'is-active' : ''} ${isPassed ? 'is-passed' : ''}`}
+                  style={{ '--step-color': stepColor }}
+                  onClick={() => {
+                    setPlaying(false);
+                    setActiveIdx(i);
+                  }}
+                  onMouseEnter={() => {
+                    if (!playing) setActiveIdx(i);
+                  }}
+                >
+                  <div className="flow-node-wrap">
+                    <span className="flow-node">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                  </div>
+                  <div className="flow-card-body">
+                    <span className="flow-stage-label">
+                      {lang === 'id' ? `Tahap ${i + 1}` : `Stage ${i + 1}`}
+                    </span>
+                    <p className="flow-step-text">{s[lang]}</p>
+                    <MicroStepVisual step={i} active={isActive} />
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      )}
+    </ScrollReveal>
+  );
+}
 
 export default function App() {
-  const [activeNav, setActiveNav] = useState('beranda');
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [bookmarkedIds, setBookmarkedIds] = useState(['krisis-suhu-kutub', 'koridor-rimba-tropis']);
-  const [selectedParkRegion, setSelectedParkRegion] = useState('Semua');
-  const [speciesCategory, setSpeciesCategory] = useState('Semua');
-  const [selectedSlideModal, setSelectedSlideModal] = useState(null);
+  const [lang, setLang] = useState('id');
+  const [active, setActive] = useState('home');
+  const [menu, setMenu] = useState(false);
+  const [slide, setSlide] = useState(0);
+  const [tab, setTab] = useState('temp');
+  const [region, setRegion] = useState('borneo');
+  const [aboutIdx, setAboutIdx] = useState(0);
+  const [detailModal, setDetailModal] = useState(null);
+  const [sent, setSent] = useState(false);
+  const [checkedTips, setCheckedTips] = useState({});
 
-  const [campaigns, setCampaigns] = useState(DONATION_CAMPAIGNS);
-  const [selectedCampaignId, setSelectedCampaignId] = useState(DONATION_CAMPAIGNS[0].id);
-  const [donors, setDonors] = useState(INITIAL_DONORS);
+  const { scrollYProgress } = useScroll();
 
-  const toggleBookmark = (id) => {
-    setBookmarkedIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
-  };
+  // 3D Mouse-Tilt Micro-Parallax (1 listener global untuk semua lapisan)
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const smoothMouseX = useSpring(mouseX, { stiffness: 90, damping: 24, mass: 0.3 });
+  const smoothMouseY = useSpring(mouseY, { stiffness: 90, damping: 24, mass: 0.3 });
 
-  // Mencegah blok teks biru, drag gambar, dan penyalinan konten di luar form input
   useEffect(() => {
-    const isEditableTarget = (target) => {
-      if (!(target instanceof Element)) return false;
-      const tag = target.tagName;
-      return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || target.isContentEditable;
+    const onMove = (e) => {
+      mouseX.set((e.clientX / window.innerWidth - 0.5) * 2);
+      mouseY.set((e.clientY / window.innerHeight - 0.5) * 2);
     };
+    window.addEventListener('mousemove', onMove, { passive: true });
+    return () => window.removeEventListener('mousemove', onMove);
+  }, [mouseX, mouseY]);
 
-    const handleBlockEvent = (e) => {
-      if (!isEditableTarget(e.target)) {
-        e.preventDefault();
-      }
+  // Mencegah blok teks biru, drag, dan copy di luar form input
+  useEffect(() => {
+    const isInput = (el) => {
+      if (!(el instanceof Element)) return false;
+      const tag = el.tagName;
+      return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable;
     };
-
-    const handleKeyDown = (e) => {
-      if (isEditableTarget(e.target)) return;
+    const block = (e) => {
+      if (!isInput(e.target)) e.preventDefault();
+    };
+    const blockKeys = (e) => {
+      if (isInput(e.target)) return;
       if ((e.ctrlKey || e.metaKey) && ['c', 'x', 'a', 'u'].includes(e.key.toLowerCase())) {
         e.preventDefault();
       }
     };
-
-    document.addEventListener('copy', handleBlockEvent);
-    document.addEventListener('cut', handleBlockEvent);
-    document.addEventListener('selectstart', handleBlockEvent);
-    document.addEventListener('dragstart', handleBlockEvent);
-    document.addEventListener('keydown', handleKeyDown);
-
+    document.addEventListener('copy', block);
+    document.addEventListener('cut', block);
+    document.addEventListener('selectstart', block);
+    document.addEventListener('dragstart', block);
+    document.addEventListener('keydown', blockKeys);
     return () => {
-      document.removeEventListener('copy', handleBlockEvent);
-      document.removeEventListener('cut', handleBlockEvent);
-      document.removeEventListener('selectstart', handleBlockEvent);
-      document.removeEventListener('dragstart', handleBlockEvent);
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('copy', block);
+      document.removeEventListener('cut', block);
+      document.removeEventListener('selectstart', block);
+      document.removeEventListener('dragstart', block);
+      document.removeEventListener('keydown', blockKeys);
     };
   }, []);
 
-  // Automatic section tracking per halaman
   useEffect(() => {
-    const sections = [
-      { id: 'section-beranda', key: 'beranda' },
-      { id: 'section-about', key: 'about' },
-      { id: 'section-artikel-galeri', key: 'konten' },
-      { id: 'section-flora-fauna', key: 'spesies' },
-      { id: 'section-taman-nasional', key: 'taman' },
-      { id: 'section-contact', key: 'contact' },
-      { id: 'section-donasi', key: 'donasi' }
-    ];
+    document.documentElement.lang = lang;
+  }, [lang]);
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const match = sections.find((s) => s.id === entry.target.id);
-            if (match) {
-              setActiveNav(match.key);
-            }
-          }
-        });
-      },
-      { rootMargin: '-40% 0px -40% 0px', threshold: 0 }
-    );
-
-    sections.forEach(({ id }) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-
-    return () => {
-      observer.disconnect();
+  // Kunci scroll halaman saat melihat modal detail konten (harus close dulu baru bisa scroll)
+  useEffect(() => {
+    if (!detailModal) {
+      document.body.style.overflow = '';
+      return undefined;
+    }
+    document.body.style.overflow = 'hidden';
+    const preventScroll = (e) => {
+      if (e.target instanceof Element && e.target.closest('.detail-modal-card')) return;
+      e.preventDefault();
     };
+    window.addEventListener('wheel', preventScroll, { passive: false });
+    window.addEventListener('touchmove', preventScroll, { passive: false });
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('wheel', preventScroll);
+      window.removeEventListener('touchmove', preventScroll);
+    };
+  }, [detailModal]);
+
+  useEffect(() => {
+    const t = setInterval(() => setSlide((s) => (s + 1) % HERO.length), 7000);
+    return () => clearInterval(t);
   }, []);
 
-  const scrollToSection = (sectionId, navKey) => {
-    setActiveNav(navKey);
-    const wasMobileOpen = mobileMenuOpen;
-    if (wasMobileOpen) {
-      setMobileMenuOpen(false);
-    }
-
-    const performScroll = () => {
-      if (sectionId === 'top' || sectionId === 'section-beranda') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        return;
-      }
-      const el = document.getElementById(sectionId);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    };
-
-    if (wasMobileOpen) {
-      window.setTimeout(performScroll, 60);
-    } else {
-      performScroll();
-    }
-  };
-
-  const handleDonateForCampaign = (campaignId) => {
-    if (campaignId) {
-      setSelectedCampaignId(campaignId);
-    }
-    setSelectedSlideModal(null);
-    scrollToSection('section-donasi', 'donasi');
-  };
-
-  const handleDonationSubmit = ({ campaignId, amount, donor }) => {
-    setCampaigns((prev) =>
-      prev.map((c) =>
-        c.id === campaignId
-          ? {
-              ...c,
-              collectedAmount: c.collectedAmount + amount,
-              donorsCount: c.donorsCount + 1
-            }
-          : c
-      )
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      (es) => es.forEach((e) => e.isIntersecting && setActive(e.target.id)),
+      { rootMargin: '-45% 0px -50% 0px' }
     );
-    setDonors((prev) => [donor, ...prev]);
+    SECTIONS.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) obs.observe(el);
+    });
+    return () => obs.disconnect();
+  }, []);
+
+  const go = (id) => {
+    setMenu(false);
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const filteredParks = useMemo(() => {
-    if (selectedParkRegion === 'Semua') return NATIONAL_PARKS;
-    return NATIONAL_PARKS.filter((p) => p.region === selectedParkRegion);
-  }, [selectedParkRegion]);
+  const toggleTip = (key) => {
+    setCheckedTips((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
 
-  const navItems = [
-    { key: 'beranda', label: 'HOME', target: 'section-beranda' },
-    { key: 'about', label: 'ABOUT', target: 'section-about' },
-    { key: 'konten', label: 'KONTEN & GALERI', target: 'section-artikel-galeri' },
-    { key: 'spesies', label: 'MODUL EDUKASI', target: 'section-flora-fauna' },
-    { key: 'taman', label: 'ATLAS 3D', target: 'section-taman-nasional' },
-    { key: 'contact', label: 'CONTACT', target: 'section-contact' }
-  ];
-
-  const isLightNavbar = activeNav !== 'beranda';
+  const h = HERO[slide];
+  const reg = FOREST.regions.find((r) => r.k === region);
+  const chart = CLIMATE.chart[tab];
+  const L = lang;
 
   return (
-    <div className="app-shell">
-      {/* Top Navbar */}
-      <header className={`top-navbar ${isLightNavbar ? 'navbar-light-mode' : ''}`}>
-        <div className="navbar-inner">
-          <motion.button
-            type="button"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.96 }}
-            className="brand-logo"
-            onClick={() => scrollToSection('section-beranda', 'beranda')}
-          >
-            <span className="brand-icon-circle">
-              <Globe2 size={18} />
-            </span>
-            <span className="brand-text">ALAMKUY</span>
-          </motion.button>
+    <div className={`app theme-${active}`}>
+      <SceneStage mouseX={smoothMouseX} mouseY={smoothMouseY} heroKey={h.key} />
 
-          <nav className="desktop-nav-links" aria-label="Navigasi Utama">
-            {navItems.map((item) => (
+      <header className="nav-wrap">
+        <nav className="nav">
+          <button className="brand" onClick={() => go('home')}>
+            <img src="/kalabumi-logo.jpg" alt="Kalabumi Logo" className="brand-logo-img" />
+            <span>KALABUMI</span>
+          </button>
+
+          <div className={`nav-links ${menu ? 'open' : ''}`}>
+            {SECTIONS.slice(0, -1).map((id) => (
               <button
-                key={item.key}
-                type="button"
-                onClick={() => scrollToSection(item.target, item.key)}
-                className={`nav-link-btn ${activeNav === item.key ? 'active' : ''}`}
+                key={id}
+                className={active === id ? 'on' : ''}
+                onClick={() => go(id)}
               >
-                {item.label}
-                {activeNav === item.key && (
+                {active === id && (
                   <motion.span
-                    layoutId="navUnderline"
-                    className="nav-motion-underline"
-                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    layoutId="nav-pill"
+                    className="nav-pill"
+                    transition={{ type: 'spring', stiffness: 380, damping: 32 }}
                   />
                 )}
+                <span className="nav-text">{UI.nav[id === 'home' ? 'home' : id][L]}</span>
               </button>
             ))}
+          </div>
 
-            <motion.button
-              type="button"
-              whileHover={{ scale: 1.05, y: -1 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => scrollToSection('section-donasi', 'donasi')}
-              className={`nav-link-btn nav-link-highlight ${
-                activeNav === 'donasi' ? 'active' : ''
-              }`}
+          <div className="nav-right">
+            <button
+              className="lang"
+              onClick={() => setLang(L === 'id' ? 'en' : 'id')}
+              aria-label="Language"
             >
-              AKSI NYATA
-            </motion.button>
-          </nav>
-
-          <div className="navbar-actions">
-            <motion.button
-              type="button"
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.92 }}
-              className="navbar-icon-btn"
-              onClick={() => scrollToSection('section-flora-fauna', 'spesies')}
-              title="Jelajahi Modul Edukasi Ekologi"
-              aria-label="Jelajahi Modul Edukasi Ekologi"
-            >
-              <Search size={17} />
-            </motion.button>
-
-            <motion.button
-              type="button"
-              key={bookmarkedIds.length}
-              initial={{ scale: 0.85 }}
-              animate={{ scale: 1 }}
-              className="navbar-bookmark-pill"
-              onClick={() => scrollToSection('section-taman-nasional', 'taman')}
-              title="Kawasan & Isu Tersimpan"
-            >
-              <Bookmark size={14} />
-              <span>{bookmarkedIds.length}</span>
-            </motion.button>
+              <Languages size={14} />
+              <span>{L === 'id' ? 'ID' : 'EN'}</span>
+            </button>
 
             <button
-              type="button"
-              className="mobile-menu-btn"
-              onClick={() => setMobileMenuOpen((o) => !o)}
-              aria-label="Menu"
+              className={`nav-cta ${active === 'action' ? 'on' : ''}`}
+              onClick={() => go('action')}
             >
-              {mobileMenuOpen ? <X size={21} /> : <Menu size={21} />}
+              <span>{UI.nav.action[L]}</span>
+              <ArrowRight size={14} />
+            </button>
+
+            <button className="burger" onClick={() => setMenu(!menu)} aria-label="Menu">
+              {menu ? <X size={19} /> : <Menu size={19} />}
             </button>
           </div>
-        </div>
-
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.2, ease: EXPO_EASE }}
-              className="mobile-nav-drawer"
-            >
-              <button
-                type="button"
-                onClick={() => scrollToSection('section-beranda', 'beranda')}
-                className="mobile-nav-item"
-              >
-                Home
-              </button>
-              <button
-                type="button"
-                onClick={() => scrollToSection('section-about', 'about')}
-                className="mobile-nav-item"
-              >
-                About (Tentang Kami)
-              </button>
-              <button
-                type="button"
-                onClick={() => scrollToSection('section-artikel-galeri', 'konten')}
-                className="mobile-nav-item"
-              >
-                Konten & Galeri
-              </button>
-              <button
-                type="button"
-                onClick={() => scrollToSection('section-flora-fauna', 'spesies')}
-                className="mobile-nav-item"
-              >
-                Modul Edukasi
-              </button>
-              <button
-                type="button"
-                onClick={() => scrollToSection('section-taman-nasional', 'taman')}
-                className="mobile-nav-item"
-              >
-                Atlas 3D Bumi
-              </button>
-              <button
-                type="button"
-                onClick={() => scrollToSection('section-contact', 'contact')}
-                className="mobile-nav-item"
-              >
-                Contact (Hubungi Kami)
-              </button>
-              <button
-                type="button"
-                onClick={() => scrollToSection('section-donasi', 'donasi')}
-                className="mobile-nav-item mobile-nav-cta"
-              >
-                Aksi Nyata & Relawan
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        </nav>
       </header>
 
-      {/* Layer Origami Fauna Bergerak di Berbagai Titik Halaman */}
-      <OrigamiFaunaLayer />
-
-      {/* Sesi 1: Halaman Home (Hero Slider Interaktif Isu Global) */}
-      <div id="section-beranda" className="snap-section">
-        <HeroSlider
-          slides={HERO_SLIDES}
-          bookmarkedIds={bookmarkedIds}
-          onToggleBookmark={toggleBookmark}
-          onExploreSlide={(slide) => setSelectedSlideModal(slide)}
-          onDonateSlide={(campId) => handleDonateForCampaign(campId)}
-        />
-      </div>
-
-      {/* Sesi 2: Halaman About (Tentang Kami, Visi, Misi & 4 Pilar Gerakan) */}
-      <AboutSection />
-
-      {/* Sesi 3: Halaman Konten / Artikel / Galeri Multimedia */}
-      <ArticleGallerySection />
-
-      {/* Sesi 4: Modul Edukasi & Literasi Ekologi Interaktif (Dipertahankan) */}
-      <SpeciesFanDeck
-        speciesList={SPECIES_DATA}
-        selectedCategory={speciesCategory}
-        onSelectCategory={setSpeciesCategory}
-        onDonateSpecies={(campId) => handleDonateForCampaign(campId)}
-      />
-
-      {/* Sesi 5: Atlas 3D Ekologi & Isu Global Model Jurnal Buku (Dipertahankan) */}
-      <ParkJournalBook
-        parks={NATIONAL_PARKS}
-        onDonatePark={(campId) => handleDonateForCampaign(campId)}
-      />
-
-      {/* Sesi 6: Halaman Contact (Form Kontak, Pengaduan, Info Saluran & FAQ) */}
-      <ContactSection />
-
-      {/* Indikator Stop-Motion Batas Halaman di Sisi Kanan */}
-      <nav className="page-stop-dots" aria-label="Navigasi Cepat Batas Halaman">
-        {[
-          ...navItems,
-          { key: 'donasi', label: 'AKSI NYATA', target: 'section-donasi' }
-        ].map((page, idx) => (
+      <aside className="rail" aria-label="Chapters">
+        {SECTIONS.map((id) => (
           <button
-            key={page.key}
-            type="button"
-            onClick={() => scrollToSection(page.target, page.key)}
-            className={`page-dot-item ${activeNav === page.key ? 'active' : ''}`}
-            title={`Halaman ${idx + 1}: ${page.label}`}
-            aria-label={`Ke ${page.label}`}
+            key={id}
+            className={active === id ? 'on' : ''}
+            onClick={() => go(id)}
+            title={UI.nav[id][L]}
           >
-            <span className="page-dot-label">{page.label}</span>
-            <span className="page-dot-bullet" />
+            <span>{UI.nav[id][L]}</span>
+            <i />
           </button>
         ))}
-      </nav>
+      </aside>
 
-      {/* Sesi 7: Halaman Aksi Nyata (Donasi Terverifikasi & Relawan - Dipertahankan) */}
-      <div className="snap-section last-snap-section">
-        <DonationPage
-          campaigns={campaigns}
-          selectedCampaignId={selectedCampaignId}
-          onSelectCampaign={setSelectedCampaignId}
-          donors={donors}
-          onSubmitDonation={handleDonationSubmit}
-        />
+      {/* HERO */}
+      <HeroSection
+        slides={HERO}
+        slide={slide}
+        setSlide={setSlide}
+        lang={L}
+        ui={UI}
+        onExplore={go}
+      />
 
-        {/* Footer Singkat */}
-        <footer className="site-footer">
-          <div className="section-container footer-row">
-            <div className="brand-logo footer-brand">
-              <span className="brand-icon-circle">
-                <Globe2 size={16} />
-              </span>
-              <span className="brand-text">ALAMKUY</span>
+      {/* ABOUT */}
+      <section id="about" className="about">
+        <div className="container">
+          <ScrollReveal fromY={52} className="about-box">
+            <span className="kicker">{UI.nav.about[L]}</span>
+            <h2>{ABOUT.title[L]}</h2>
+            <p className="lead">{ABOUT.text[L]}</p>
+          </ScrollReveal>
+
+          <ScrollReveal fromY={72} scaleIn={0.92}>
+            <AboutPopUpBook
+              activeIndex={aboutIdx}
+              onChangeIndex={setAboutIdx}
+              onGoChapter={go}
+              links={ABOUT.links}
+              lang={L}
+            />
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* BAB 1 */}
+      <Chapter id="climate" data={CLIMATE} lang={L}>
+        <div className="grid3">
+          {CLIMATE.impacts.map((c, idx) => (
+            <ScrollReveal
+              key={c.key}
+              fromX={(idx - 1) * 34}
+              fromY={60 + idx * 16}
+              className="card impact-card clickable-card"
+            >
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() =>
+                  setDetailModal({
+                    image: c.image,
+                    badge: c.status[L],
+                    title: c.title[L],
+                    subtitle: CLIMATE.title[L],
+                    text: `${c.text[L]} ${c.detail ? c.detail[L] : ''}`,
+                  })
+                }
+                onKeyDown={(e) => e.key === 'Enter' && setDetailModal({
+                  image: c.image,
+                  badge: c.status[L],
+                  title: c.title[L],
+                  subtitle: CLIMATE.title[L],
+                  text: `${c.text[L]} ${c.detail ? c.detail[L] : ''}`,
+                })}
+              >
+                <div className="impact-media">
+                  <img src={c.image} alt={c.title[L]} loading="lazy" />
+                  <span className="card-num">0{idx + 1}</span>
+                </div>
+                <div className="impact-body">
+                  <h3>{c.title[L]}</h3>
+                  <p>{c.text[L]}</p>
+                  <span className="card-detail-link">
+                    {L === 'id' ? 'Lihat detail' : 'View details'} <ArrowRight size={13} />
+                  </span>
+                </div>
+              </div>
+            </ScrollReveal>
+          ))}
+        </div>
+
+        <ScrollReveal fromY={70} className="split panel">
+          <div>
+            <span className="kicker">Papua · Puncak Jaya</span>
+            <h3 className="h3-lg">{CLIMATE.papua.title[L]}</h3>
+            <p>{CLIMATE.papua.text[L]}</p>
+            <GlacierCompare
+              before={CLIMATE.papua.before[L]}
+              now={CLIMATE.papua.now[L]}
+              beforeImg={CLIMATE.papua.beforeImg}
+              nowImg={CLIMATE.papua.nowImg}
+              hint={CLIMATE.papua.hint[L]}
+            />
+            <small className="note">{CLIMATE.papua.credit[L]}</small>
+          </div>
+          <div className="card chart-card">
+            <h4>{CLIMATE.papua.chartTitle[L]}</h4>
+            <LineChart data={CLIMATE.papua.series} unit=" km²" color="#eab308" />
+            <small className="note">{UI.approx[L]}</small>
+          </div>
+        </ScrollReveal>
+
+        <ScrollReveal fromY={68} className="card chart-card">
+          <div className="chart-bar">
+            <h3>{CLIMATE.chart.title[L]}</h3>
+            <div className="tabs">
+              {CLIMATE.chart.tabs.map((t) => (
+                <button
+                  key={t.k}
+                  className={tab === t.k ? 'on' : ''}
+                  onClick={() => setTab(t.k)}
+                >
+                  {t[L]}
+                </button>
+              ))}
             </div>
-            <p className="footer-note">
-              Portal Edukasi Lingkungan & Isu Global. Data bersumber dari IPCC, UNEP, IUCN, dan KLHK.
-            </p>
+          </div>
+          <LineChart
+            key={tab}
+            data={chart.data}
+            unit={chart.unit}
+            color={tab === 'temp' ? '#f97316' : '#0ea5e9'}
+          />
+          <small className="note">{chart.note[L]} {UI.approx[L]}</small>
+        </ScrollReveal>
+      </Chapter>
+
+      {/* BAB 2 */}
+      <Chapter id="ocean" data={OCEAN} lang={L}>
+        <Stats items={OCEAN.stats} lang={L} />
+        <Flow title={OCEAN.chain.title} steps={OCEAN.chain.steps} lang={L} variant="zigzag" />
+        <ScrollReveal as="h3" fromY={40} className="h3-lg center">{OCEAN.speciesTitle[L]}</ScrollReveal>
+        <ScrollReveal fromY={56}>
+          <MarineCreatureMap
+            species={OCEAN.species}
+            lang={L}
+            chapterTitle={OCEAN.title[L]}
+            onOpenDetail={setDetailModal}
+          />
+        </ScrollReveal>
+      </Chapter>
+
+      {/* BAB 3 */}
+      <Chapter id="forest" data={FOREST} lang={L}>
+        <Stats items={FOREST.stats} lang={L} />
+        <ScrollReveal fromY={64} className="card region-card">
+          <div className="tabs">
+            {FOREST.regions.map((r) => (
+              <button
+                key={r.k}
+                className={region === r.k ? 'on' : ''}
+                onClick={() => setRegion(r.k)}
+              >
+                {r.name[L]}
+              </button>
+            ))}
+          </div>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={reg.k}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              className="region-grid"
+            >
+              <div>
+                <h3>{reg.name[L]}</h3>
+                <p>{reg.text[L]}</p>
+                <div className="chips">
+                  {reg.species.map((s) => (
+                    <span key={s.en} className="chip">
+                      <i className="chip-dot" />
+                      {s[L]}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="region-collage">
+                <img src={reg.image} alt={reg.name[L]} className="collage-main" loading="lazy" />
+                <img src={reg.wildlifeImage} alt={reg.species[0][L]} className="collage-sub" loading="lazy" />
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </ScrollReveal>
+        <ScrollReveal fromY={70}>
+          <ForestFanDeck
+            deck={FOREST.fanDeck}
+            lang={L}
+            onOpenDetail={(card) =>
+              setDetailModal({
+                image: card.image,
+                badge: card.status[L],
+                title: card.name[L],
+                subtitle: card.habitat[L],
+                text: card.detail[L],
+              })
+            }
+          />
+        </ScrollReveal>
+        <Flow title={FOREST.cascade.title} steps={FOREST.cascade.steps} lang={L} variant="canopy" />
+      </Chapter>
+
+      {/* AKSI + KONTAK */}
+      <section id="action" className="action">
+        <div className="container">
+          <ScrollReveal as="header" fromY={48} className="chapter-head">
+            <span className="kicker">{UI.nav.action[L]}</span>
+            <h2>{ACTION.title[L]}</h2>
+            <p>{ACTION.intro[L]}</p>
+          </ScrollReveal>
+
+          <div className="grid3">
+            {ACTION.groups.map((g, gi) => {
+              const Icon = [Snowflake, Waves, Trees][gi];
+              return (
+                <ScrollReveal
+                  key={g.k}
+                  fromX={(gi - 1) * 32}
+                  fromY={58 + gi * 16}
+                  className={`card tip tip-${g.k}`}
+                >
+                  <div className="tip-head">
+                    <span className="tip-icon"><Icon size={18} /></span>
+                    <h3>{g.title[L]}</h3>
+                  </div>
+                  <ul className="checklist">
+                    {g.tips.map((t) => {
+                      const k = `${g.k}-${t.en}`;
+                      const done = !!checkedTips[k];
+                      return (
+                        <li key={t.en}>
+                          <button
+                            type="button"
+                            className={`check-item ${done ? 'done' : ''}`}
+                            onClick={() => toggleTip(k)}
+                          >
+                            <span className="check-box">{done && <Check size={13} />}</span>
+                            <span>{t[L]}</span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </ScrollReveal>
+              );
+            })}
+          </div>
+
+          <ScrollReveal fromY={52} className="orgs-wrap">
+            <h3 className="h3-lg center">{ACTION.orgsTitle[L]}</h3>
+            <div className="chips center-chips">
+              {ACTION.orgs.map((o) => (
+                <a key={o.name} className="chip link" href={o.url} target="_blank" rel="noreferrer">
+                  <span>{o.name}</span>
+                  <ExternalLink size={13} />
+                </a>
+              ))}
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal fromY={64}>
+            <PlasticQuiz quiz={OCEAN.quiz} lang={L} />
+          </ScrollReveal>
+
+          <ScrollReveal fromY={64} className="card contact-wrap">
+            <div className="contact-info">
+              <div className="contact-brand-row">
+                <img src="/kalabumi-logo.jpg" alt="Kalabumi" className="contact-logo-img" />
+                <span className="kicker">KALABUMI</span>
+              </div>
+              <h3>{ACTION.contactTitle[L]}</h3>
+              <p>{ACTION.contactText[L]}</p>
+            </div>
+            <form
+              className="contact-form"
+              onSubmit={(e) => {
+                e.preventDefault();
+                setSent(true);
+                e.target.reset();
+              }}
+            >
+              <input id="contact-name" name="name" required placeholder={ACTION.form.name[L]} />
+              <input id="contact-email" name="email" required type="email" placeholder={ACTION.form.email[L]} />
+              <textarea id="contact-msg" name="message" required rows="4" placeholder={ACTION.form.msg[L]} />
+              <button className="btn" type="submit">
+                <Send size={15} />
+                <span>{ACTION.form.send[L]}</span>
+              </button>
+              {sent && <p className="ok">{ACTION.form.thanks[L]}</p>}
+            </form>
+          </ScrollReveal>
+        </div>
+        <footer className="footer">
+          <div className="container footer-inner">
+            <div className="footer-grid">
+              <div className="footer-brand">
+                <div className="footer-brand-head">
+                  <img src="/kalabumi-logo.jpg" alt="Kalabumi" className="footer-logo" />
+                  <div>
+                    <strong>KALABUMI</strong>
+                    <span>{L === 'id' ? 'Edukasi Krisis Bumi' : 'Earth Crisis Education'}</span>
+                  </div>
+                </div>
+                <p className="footer-desc">
+                  {L === 'id'
+                    ? 'Portal visual interaktif yang merangkum data iklim, lautan, dan hutan hujan agar lebih mudah dipahami dan ditindaklanjuti.'
+                    : 'An interactive visual portal translating climate, ocean, and rainforest data into clear stories and daily action.'}
+                </p>
+                <div className="footer-badges">
+                  <span className="footer-dot-pill is-green">{L === 'id' ? 'Iklim & Es' : 'Climate & Ice'}</span>
+                  <span className="footer-dot-pill is-blue">{L === 'id' ? 'Lautan' : 'Oceans'}</span>
+                  <span className="footer-dot-pill is-orange">{L === 'id' ? 'Hutan Hujan' : 'Rainforests'}</span>
+                </div>
+              </div>
+
+              <div className="footer-col">
+                <h5>{L === 'id' ? 'Jelajahi Bab' : 'Explore Chapters'}</h5>
+                <ul className="footer-links">
+                  {SECTIONS.map((id) => (
+                    <li key={`ft-${id}`}>
+                      <button type="button" onClick={() => go(id)}>
+                        <ArrowRight size={12} />
+                        <span>{UI.nav[id][L]}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="footer-col footer-col-top">
+                <button type="button" className="footer-top-btn" onClick={() => go('home')}>
+                  <ArrowUp size={14} />
+                  <span>{L === 'id' ? 'Kembali ke atas' : 'Back to top'}</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="footer-bottom">
+              <span>{ACTION.footer[L]}</span>
+              <span className="footer-copy">© {new Date().getFullYear()} KALABUMI</span>
+            </div>
           </div>
         </footer>
-      </div>
+      </section>
 
-      {/* Modal Ringkas */}
+      {/* MODAL DETAIL KONTEN (Kunci scroll sampai tombol Close ditekan) */}
       <AnimatePresence>
-        {selectedSlideModal && (
+        {detailModal && (
           <motion.div
+            className="fan-modal-backdrop"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="modal-backdrop"
-            onClick={() => setSelectedSlideModal(null)}
             role="dialog"
             aria-modal="true"
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 24 }}
+              className="fan-modal detail-modal-card"
+              initial={{ opacity: 0, scale: 0.92, y: 18 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.92, y: 16 }}
-              transition={{ type: 'spring', stiffness: 320, damping: 26 }}
-              className="modal-card"
-              onClick={(e) => e.stopPropagation()}
+              exit={{ opacity: 0, scale: 0.94, y: 12 }}
             >
-              <button
-                type="button"
-                className="modal-close-btn"
-                onClick={() => setSelectedSlideModal(null)}
-                aria-label="Tutup"
-              >
-                <X size={18} />
-              </button>
-
-              <div className="modal-hero-img">
-                <img src={selectedSlideModal.image} alt={selectedSlideModal.title} />
-                <div className="modal-hero-caption">
-                  <span className="modal-badge">{selectedSlideModal.unesco}</span>
-                  <h2>{selectedSlideModal.title}</h2>
-                  <p>{selectedSlideModal.subtitle}</p>
-                </div>
-              </div>
-
-              <div className="modal-body">
-                <div className="modal-stats-row">
-                  <div className="modal-stat-box">
-                    <span>Status</span>
-                    <strong>{selectedSlideModal.iucnBadge}</strong>
-                  </div>
-                  <div className="modal-stat-box">
-                    <span>Populasi</span>
-                    <strong>{selectedSlideModal.populationStat}</strong>
-                  </div>
-                  <div className="modal-stat-box">
-                    <span>Luas</span>
-                    <strong>{selectedSlideModal.areaStat}</strong>
-                  </div>
-                </div>
-
-                <ul className="modal-highlights-list">
-                  {selectedSlideModal.highlights.map((h) => (
-                    <li key={h}>
-                      <Sparkles size={15} />
-                      <span>{h}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="modal-actions">
-                  <motion.button
-                    type="button"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.97 }}
-                    onClick={() => handleDonateForCampaign(selectedSlideModal.campaignId)}
-                  >
-                    <HeartHandshake size={17} />
-                    <span>Donasi Kawasan Ini</span>
-                  </motion.button>
-                </div>
+              <img src={detailModal.image} alt={detailModal.title} className="fan-modal-img" />
+              <div className="fan-modal-body">
+                <span className="fan-modal-badge">{detailModal.badge}</span>
+                <h4>{detailModal.title}</h4>
+                <small>{detailModal.subtitle}</small>
+                <p>{detailModal.text}</p>
+                <button
+                  type="button"
+                  className="btn detail-close-btn"
+                  onClick={() => setDetailModal(null)}
+                >
+                  <X size={15} />
+                  <span>{L === 'id' ? 'Tutup Detail' : 'Close Details'}</span>
+                </button>
               </div>
             </motion.div>
           </motion.div>
