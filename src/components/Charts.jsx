@@ -212,7 +212,7 @@ export function LineChart({ data, unit, color = '#f97316' }) {
               x2={bx}
               initial={{ y1: bZero, y2: bZero }}
               whileInView={{ y1: by, y2: bZero }}
-              viewport={{ once: false, amount: 0.3 }}
+              viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.5, delay: i * 0.04, ease: 'easeOut' }}
               stroke={color}
               strokeWidth={1.5}
@@ -229,7 +229,7 @@ export function LineChart({ data, unit, color = '#f97316' }) {
           fill={`url(#grad-${uid})`}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: false, amount: 0.3 }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6 }}
         />
 
@@ -238,7 +238,7 @@ export function LineChart({ data, unit, color = '#f97316' }) {
           key={`base-${path}`}
           initial={{ pathLength: 0, opacity: 0.3 }}
           whileInView={{ pathLength: 1, opacity: 0.4 }}
-          viewport={{ once: false, amount: 0.3 }}
+          viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.9, ease: 'easeOut' }}
           d={path}
           fill="none"

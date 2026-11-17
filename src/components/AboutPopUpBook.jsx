@@ -178,7 +178,7 @@ function createDieCutCard(w, h, drawFn, paperBump) {
   return mesh;
 }
 
-// Gambar kanopi awan laser-cut krem seperti latar foto referensi
+// Gambar kanopi awan laser-cut krem tanpa terpotong di tepi atas kanvas
 function drawCloudBackdrop(ctx, W, H, tint = '#f4ead5', outline = '#dfd0b4') {
   ctx.fillStyle = tint;
   ctx.strokeStyle = outline;
@@ -186,11 +186,11 @@ function drawCloudBackdrop(ctx, W, H, tint = '#f4ead5', outline = '#dfd0b4') {
 
   ctx.beginPath();
   ctx.moveTo(W * 0.04, H);
-  ctx.lineTo(W * 0.04, H * 0.56);
-  ctx.arc(W * 0.18, H * 0.52, W * 0.14, Math.PI, 0, false);
-  ctx.arc(W * 0.38, H * 0.34, W * 0.18, Math.PI * 0.9, 0.1, false);
-  ctx.arc(W * 0.62, H * 0.28, W * 0.2, Math.PI * 0.95, 0, false);
-  ctx.arc(W * 0.84, H * 0.48, W * 0.13, Math.PI * 0.85, 0, false);
+  ctx.lineTo(W * 0.04, H * 0.64);
+  ctx.arc(W * 0.18, H * 0.62, H * 0.26, Math.PI, 0, false);
+  ctx.arc(W * 0.38, H * 0.48, H * 0.34, Math.PI * 0.92, 0.08, false);
+  ctx.arc(W * 0.62, H * 0.44, H * 0.36, Math.PI * 0.95, 0, false);
+  ctx.arc(W * 0.84, H * 0.58, H * 0.26, Math.PI * 0.88, 0, false);
   ctx.lineTo(W * 0.96, H);
   ctx.closePath();
   ctx.fill();
@@ -199,9 +199,9 @@ function drawCloudBackdrop(ctx, W, H, tint = '#f4ead5', outline = '#dfd0b4') {
   // Lubang ukiran kertas (cutout)
   ctx.globalCompositeOperation = 'destination-out';
   [
-    [W * 0.34, H * 0.42, W * 0.055, H * 0.04],
-    [W * 0.64, H * 0.34, W * 0.065, H * 0.045],
-    [W * 0.82, H * 0.54, W * 0.045, H * 0.032],
+    [W * 0.36, H * 0.5, W * 0.05, H * 0.045],
+    [W * 0.63, H * 0.44, W * 0.06, H * 0.05],
+    [W * 0.83, H * 0.6, W * 0.042, H * 0.036],
   ].forEach(([cx, cy, rx, ry]) => {
     ctx.beginPath();
     ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
@@ -555,12 +555,17 @@ export default function AboutPopUpBook({ activeIndex, onChangeIndex, onGoChapter
     spine.castShadow = true;
     book.add(spine);
 
+    const leftWingPivot = new THREE.Group();
+    leftWingPivot.position.set(-0.14, 0.04, 0);
+    leftWingPivot.rotation.z = -Math.PI;
+    book.add(leftWingPivot);
+
     const leftCover = new THREE.Mesh(new THREE.BoxGeometry(2.92, 0.09, 3.9), coverMat);
-    leftCover.position.set(-1.6, -0.09, 0);
+    leftCover.position.set(-1.46, -0.13, 0);
     leftCover.rotation.z = -0.025;
     leftCover.castShadow = true;
     leftCover.receiveShadow = true;
-    book.add(leftCover);
+    leftWingPivot.add(leftCover);
 
     const rightCover = new THREE.Mesh(new THREE.BoxGeometry(2.92, 0.09, 3.9), coverMat);
     rightCover.position.set(1.6, -0.09, 0);
@@ -577,10 +582,10 @@ export default function AboutPopUpBook({ activeIndex, onChangeIndex, onGoChapter
       roughness: 0.9,
     });
     const leftStack = new THREE.Mesh(new THREE.BoxGeometry(2.74, 0.14, 3.68), stackMat);
-    leftStack.position.set(-1.49, 0.01, 0);
+    leftStack.position.set(-1.35, -0.03, 0);
     leftStack.castShadow = true;
     leftStack.receiveShadow = true;
-    book.add(leftStack);
+    leftWingPivot.add(leftStack);
 
     const rightStack = new THREE.Mesh(new THREE.BoxGeometry(2.74, 0.14, 3.68), stackMat);
     rightStack.position.set(1.49, 0.01, 0);
@@ -619,9 +624,9 @@ export default function AboutPopUpBook({ activeIndex, onChangeIndex, onGoChapter
 
     const leftArchGeo = createCurvedPageGeometry(2.76, 3.68, false);
     const leftArch = new THREE.Mesh(leftArchGeo, leftPageMat);
-    leftArch.position.set(-1.46, 0.082, 0);
+    leftArch.position.set(-1.32, 0.042, 0);
     leftArch.receiveShadow = true;
-    book.add(leftArch);
+    leftWingPivot.add(leftArch);
 
     const rightArchGeo = createCurvedPageGeometry(2.76, 3.68, true);
     const rightArch = new THREE.Mesh(rightArchGeo, rightPageMat);
@@ -736,22 +741,41 @@ export default function AboutPopUpBook({ activeIndex, onChangeIndex, onGoChapter
     let clock = 0;
     let raf = 0;
     let inView = true;
+    let targetOpen = 0;
+    let openProgress = 0;
 
     const visObs = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           inView = entry.isIntersecting;
+          if (!entry.isIntersecting) {
+            targetOpen = 0;
+            openProgress = 0;
+          }
         });
       },
       { rootMargin: '150px' }
     );
     visObs.observe(el);
 
+    const openObs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            targetOpen = 1;
+          }
+        });
+      },
+      { threshold: 0.28 }
+    );
+    openObs.observe(el);
+
     const easeOutBack = (t) => {
       const c1 = 1.70158;
       const c3 = c1 + 1;
       return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
     };
+    const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
     const animate = () => {
       raf = requestAnimationFrame(animate);
@@ -760,7 +784,19 @@ export default function AboutPopUpBook({ activeIndex, onChangeIndex, onGoChapter
 
       coverMat.color.lerp(targetColor, 0.08);
 
-      if (phase === 'foldOut') {
+      // Animasi membuka buku dari tertutup menjadi terbuka & pop-up muncul saat di-scroll
+      if (targetOpen === 1 && openProgress < 1) {
+        openProgress = Math.min(1, openProgress + 0.022);
+      }
+      const coverOpen = easeOutCubic(openProgress);
+      leftWingPivot.rotation.z = -Math.PI * (1 - coverOpen);
+      book.position.x = -1.42 * (1 - coverOpen);
+
+      if (phase === 'idle') {
+        const popT = Math.max(0, Math.min(1, (openProgress - 0.35) / 0.65));
+        const popScale = popT <= 0 ? 0.001 : Math.max(0.001, easeOutBack(popT));
+        dioramas[currentSlide].scale.set(1, popScale, 1);
+      } else if (phase === 'foldOut') {
         progress = Math.min(1, progress + 0.065);
         const s = Math.max(0.001, 1 - progress);
         dioramas[currentSlide].scale.set(1, s, 1);
@@ -827,6 +863,7 @@ export default function AboutPopUpBook({ activeIndex, onChangeIndex, onGoChapter
     return () => {
       cancelAnimationFrame(raf);
       visObs.disconnect();
+      openObs.disconnect();
       dom.removeEventListener('pointerdown', onDown);
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onUp);
@@ -848,25 +885,7 @@ export default function AboutPopUpBook({ activeIndex, onChangeIndex, onGoChapter
       onMouseLeave={() => setHovered(false)}
     >
       <div className="popup-stage-row">
-        <button
-          type="button"
-          className="popup-side-nav left"
-          onClick={prevSlide}
-          aria-label="Slide buku sebelumnya"
-        >
-          <ChevronLeft size={22} />
-        </button>
-
         <div className="popup-canvas-open" ref={mountRef} aria-label="3D Pop-Up Book" />
-
-        <button
-          type="button"
-          className="popup-side-nav right"
-          onClick={nextSlide}
-          aria-label="Slide buku berikutnya"
-        >
-          <ChevronRight size={22} />
-        </button>
       </div>
 
       <div className={`popup-floating-hint ${hovered ? 'show' : ''}`}>

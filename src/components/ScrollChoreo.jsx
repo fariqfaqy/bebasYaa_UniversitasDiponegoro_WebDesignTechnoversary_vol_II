@@ -19,7 +19,7 @@ export function ScrollReveal({
     <Tag
       initial={{ opacity: 0, x: fromX * 0.6, y: fromY, scale: scaleIn }}
       whileInView={{ opacity: 1, x: 0, y: 0, scale: 1 }}
-      viewport={{ once: false, amount: 0.16, margin: '-30px 0px -30px 0px' }}
+      viewport={{ once: false, amount: 0.12, margin: '600px 0px -40px 0px' }}
       transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
       className={className}
     >

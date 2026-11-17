@@ -11,6 +11,9 @@ import {
   ExternalLink,
   ArrowRight,
   ArrowUp,
+  Mail,
+  MapPin,
+  Users,
   Check,
   Send,
   BookOpen,
@@ -19,6 +22,7 @@ import {
   Sparkles,
   Play,
   Pause,
+  ChevronDown,
 } from 'lucide-react';
 import { UI, HERO, ABOUT, CLIMATE, OCEAN, FOREST, ACTION } from './data/content';
 import HeroSection from './components/HeroSection';
@@ -28,20 +32,51 @@ import { LineChart, GlacierCompare } from './components/Charts';
 import PlasticQuiz from './components/PlasticQuiz';
 import ForestFanDeck from './components/ForestFanDeck';
 import MarineCreatureMap from './components/MarineCreatureMap';
+import ActionGarden from './components/ActionGarden';
+import TeamLanyardCards from './components/TeamLanyardCards';
 import { VectorArt } from './components/VectorArt';
 import { ScrollReveal } from './components/ScrollChoreo';
 
-const SECTIONS = ['home', 'about', 'climate', 'ocean', 'forest', 'action'];
+const SECTIONS = ['home', 'about', 'climate', 'ocean', 'forest', 'action', 'contact'];
+const NAV_LINKS = ['home', 'about', 'climate', 'ocean', 'forest', 'contact'];
 const fade = { initial: { opacity: 0, y: 24 }, whileInView: { opacity: 1, y: 0 } };
 
 function Chapter({ id, data, lang, children }) {
+  const accentMap = { climate: '#f97316', ocean: '#0ea5e9', forest: '#22c55e' };
+  const accent = accentMap[id] || '#f97316';
   return (
     <section id={id} className={`chapter ch-${id}`}>
       <div className="container">
         <ScrollReveal as="header" fromX={-36} fromY={48} className="chapter-head">
           <span className="kicker">{data.kicker[lang]}</span>
           <h2>{data.title[lang]}</h2>
-          <p>{data.intro[lang]}</p>
+          <div className="chapter-dyk-box" style={{ '--dyk-accent': accent }}>
+            <div className="chapter-dyk-lens" aria-hidden="true">
+              <motion.svg
+                viewBox="0 0 64 64"
+                className="chapter-dyk-svg"
+                animate={{
+                  x: [-4, 5, -2, 4, -4],
+                  y: [-3, 4, 2, -3, -3],
+                  rotate: [-7, 6, -3, 5, -7],
+                }}
+                transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                <line x1="40" y1="40" x2="56" y2="56" stroke="#0f2438" strokeWidth="7" strokeLinecap="round" />
+                <line x1="40" y1="40" x2="56" y2="56" stroke={accent} strokeWidth="3.5" strokeLinecap="round" />
+                <circle cx="26" cy="26" r="18" fill="rgba(255, 255, 255, 0.72)" stroke="#0f2438" strokeWidth="4.2" />
+                <circle cx="26" cy="26" r="14" fill="none" stroke={accent} strokeWidth="1.6" opacity="0.7" />
+                <path d="M17,19 Q22,14 29,15" fill="none" stroke="#ffffff" strokeWidth="2.8" strokeLinecap="round" />
+              </motion.svg>
+            </div>
+            <div className="chapter-dyk-text">
+              <span className="chapter-dyk-pill">
+                <Sparkles size={11} />
+                {lang === 'id' ? 'Tahukah kamu?' : 'Did you know?'}
+              </span>
+              <p>{data.intro[lang]}</p>
+            </div>
+          </div>
         </ScrollReveal>
         {children}
         <ScrollReveal fromY={28} className="src-bar">
@@ -424,6 +459,7 @@ export default function App() {
   const [slide, setSlide] = useState(0);
   const [tab, setTab] = useState('temp');
   const [region, setRegion] = useState('borneo');
+  const [regionMenuOpen, setRegionMenuOpen] = useState(false);
   const [aboutIdx, setAboutIdx] = useState(0);
   const [detailModal, setDetailModal] = useState(null);
   const [sent, setSent] = useState(false);
@@ -538,12 +574,12 @@ export default function App() {
       <header className="nav-wrap">
         <nav className="nav">
           <button className="brand" onClick={() => go('home')}>
-            <img src="/kalabumi-logo.jpg" alt="Kalabumi Logo" className="brand-logo-img" />
+            <img src="/kalabumi-logo.png" alt="Kalabumi Logo" className="brand-logo-img" />
             <span>KALABUMI</span>
           </button>
 
           <div className={`nav-links ${menu ? 'open' : ''}`}>
-            {SECTIONS.slice(0, -1).map((id) => (
+            {NAV_LINKS.map((id) => (
               <button
                 key={id}
                 className={active === id ? 'on' : ''}
@@ -742,16 +778,73 @@ export default function App() {
       <Chapter id="forest" data={FOREST} lang={L}>
         <Stats items={FOREST.stats} lang={L} />
         <ScrollReveal fromY={64} className="card region-card">
-          <div className="tabs">
+          <div className="tabs region-tabs-desktop">
             {FOREST.regions.map((r) => (
               <button
                 key={r.k}
-                className={region === r.k ? 'on' : ''}
+                className={`${region === r.k ? 'on' : ''} ${r.isIndonesia ? 'tab-id' : ''} ${r.isTrending ? 'tab-trending' : ''}`}
                 onClick={() => setRegion(r.k)}
               >
-                {r.name[L]}
+                <span>{r.name[L]}</span>
+                {r.isTrending ? (
+                  <span className="tab-tag tab-tag-trend">{L === 'id' ? 'TREN ID' : 'ID TREND'}</span>
+                ) : r.isIndonesia ? (
+                  <span className="tab-tag tab-tag-id">ID</span>
+                ) : null}
               </button>
             ))}
+          </div>
+
+          {/* Dropdown pemilih wilayah yang rapi di mobile */}
+          <div className="region-mobile-dropdown">
+            <button
+              type="button"
+              className="region-dropdown-trigger"
+              onClick={() => setRegionMenuOpen((o) => !o)}
+              aria-expanded={regionMenuOpen}
+            >
+              <span className="region-trigger-left">
+                <Menu size={16} />
+                <span>{reg.name[L]}</span>
+                {reg.isTrending ? (
+                  <span className="tab-tag tab-tag-trend">{L === 'id' ? 'TREN ID' : 'ID TREND'}</span>
+                ) : reg.isIndonesia ? (
+                  <span className="tab-tag tab-tag-id">ID</span>
+                ) : null}
+              </span>
+              <ChevronDown size={16} className={`region-chevron ${regionMenuOpen ? 'open' : ''}`} />
+            </button>
+
+            <AnimatePresence>
+              {regionMenuOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.18 }}
+                  className="region-dropdown-menu"
+                >
+                  {FOREST.regions.map((r) => (
+                    <button
+                      key={`mob-${r.k}`}
+                      type="button"
+                      className={`region-dropdown-item ${region === r.k ? 'on' : ''}`}
+                      onClick={() => {
+                        setRegion(r.k);
+                        setRegionMenuOpen(false);
+                      }}
+                    >
+                      <span>{r.name[L]}</span>
+                      {r.isTrending ? (
+                        <span className="tab-tag tab-tag-trend">{L === 'id' ? 'TREN ID' : 'ID TREND'}</span>
+                      ) : r.isIndonesia ? (
+                        <span className="tab-tag tab-tag-id">ID</span>
+                      ) : null}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           <AnimatePresence mode="wait">
@@ -761,9 +854,19 @@ export default function App() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
-              className="region-grid"
+              className={`region-grid ${reg.isIndonesia ? 'region-grid-id' : ''}`}
             >
               <div>
+                {reg.highlight ? (
+                  <div className={`region-highlight-pill ${reg.isTrending ? 'is-trending' : 'is-id'}`}>
+                    <span className="region-id-dot" aria-hidden="true" />
+                    <span>{reg.highlight[L]}</span>
+                  </div>
+                ) : (
+                  <div className="region-highlight-pill is-global">
+                    <span>{L === 'id' ? 'Perspektif Global · Amerika Selatan' : 'Global Perspective · South America'}</span>
+                  </div>
+                )}
                 <h3>{reg.name[L]}</h3>
                 <p>{reg.text[L]}</p>
                 <div className="chips">
@@ -809,42 +912,13 @@ export default function App() {
             <p>{ACTION.intro[L]}</p>
           </ScrollReveal>
 
-          <div className="grid3">
-            {ACTION.groups.map((g, gi) => {
-              const Icon = [Snowflake, Waves, Trees][gi];
-              return (
-                <ScrollReveal
-                  key={g.k}
-                  fromX={(gi - 1) * 32}
-                  fromY={58 + gi * 16}
-                  className={`card tip tip-${g.k}`}
-                >
-                  <div className="tip-head">
-                    <span className="tip-icon"><Icon size={18} /></span>
-                    <h3>{g.title[L]}</h3>
-                  </div>
-                  <ul className="checklist">
-                    {g.tips.map((t) => {
-                      const k = `${g.k}-${t.en}`;
-                      const done = !!checkedTips[k];
-                      return (
-                        <li key={t.en}>
-                          <button
-                            type="button"
-                            className={`check-item ${done ? 'done' : ''}`}
-                            onClick={() => toggleTip(k)}
-                          >
-                            <span className="check-box">{done && <Check size={13} />}</span>
-                            <span>{t[L]}</span>
-                          </button>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </ScrollReveal>
-              );
-            })}
-          </div>
+          <ActionGarden
+            groups={ACTION.groups}
+            checkedTips={checkedTips}
+            onToggleTip={toggleTip}
+            onResetTips={() => setCheckedTips({})}
+            lang={L}
+          />
 
           <ScrollReveal fromY={52} className="orgs-wrap">
             <h3 className="h3-lg center">{ACTION.orgsTitle[L]}</h3>
@@ -861,41 +935,89 @@ export default function App() {
           <ScrollReveal fromY={64}>
             <PlasticQuiz quiz={OCEAN.quiz} lang={L} />
           </ScrollReveal>
+        </div>
+      </section>
 
-          <ScrollReveal fromY={64} className="card contact-wrap">
-            <div className="contact-info">
-              <div className="contact-brand-row">
-                <img src="/kalabumi-logo.jpg" alt="Kalabumi" className="contact-logo-img" />
-                <span className="kicker">KALABUMI</span>
-              </div>
-              <h3>{ACTION.contactTitle[L]}</h3>
-              <p>{ACTION.contactText[L]}</p>
-            </div>
-            <form
-              className="contact-form"
-              onSubmit={(e) => {
-                e.preventDefault();
-                setSent(true);
-                e.target.reset();
-              }}
-            >
-              <input id="contact-name" name="name" required placeholder={ACTION.form.name[L]} />
-              <input id="contact-email" name="email" required type="email" placeholder={ACTION.form.email[L]} />
-              <textarea id="contact-msg" name="message" required rows="4" placeholder={ACTION.form.msg[L]} />
-              <button className="btn" type="submit">
-                <Send size={15} />
-                <span>{ACTION.form.send[L]}</span>
-              </button>
-              {sent && <p className="ok">{ACTION.form.thanks[L]}</p>}
-            </form>
+      {/* HALAMAN KONTAK */}
+      <section id="contact" className="contact-section">
+        <div className="container">
+          <ScrollReveal as="header" fromY={44} className="chapter-head contact-head">
+            <span className="kicker">{UI.nav.contact[L]}</span>
+            <h2>{ACTION.contactTitle[L]}</h2>
+            <p>{ACTION.contactText[L]}</p>
           </ScrollReveal>
+
+          <div className="contact-collab-row">
+            <ScrollReveal fromX={-24} fromY={40} className="card contact-collab-card">
+              <div className="contact-info">
+                <div className="contact-brand-row">
+                  <img src="/kalabumi-logo.png" alt="Kalabumi" className="contact-logo-img" />
+                  <span className="kicker">KALABUMI</span>
+                </div>
+                <h3>{L === 'id' ? 'Mari Berkolaborasi untuk Bumi' : 'Collaborate With Us for Earth'}</h3>
+                <p>
+                  {L === 'id'
+                    ? 'Kami terbuka untuk masukan data ilmiah, liputan komunitas lingkungan, dan kerja sama edukasi sekolah maupun kampus.'
+                    : 'We welcome scientific data feedback, community spotlight stories, and school or campus educational partnerships.'}
+                </p>
+
+                <div className="contact-channels">
+                  <div className="contact-channel-item">
+                    <span className="contact-ch-icon"><Mail size={16} /></span>
+                    <div>
+                      <small>Email</small>
+                      <strong>halo@kalabumi.id</strong>
+                    </div>
+                  </div>
+                  <div className="contact-channel-item">
+                    <span className="contact-ch-icon"><Users size={16} /></span>
+                    <div>
+                      <small>{L === 'id' ? 'Kolaborasi' : 'Partnership'}</small>
+                      <strong>{L === 'id' ? 'Komunitas & Sekolah Hijau' : 'Green Communities & Schools'}</strong>
+                    </div>
+                  </div>
+                  <div className="contact-channel-item">
+                    <span className="contact-ch-icon"><MapPin size={16} /></span>
+                    <div>
+                      <small>{L === 'id' ? 'Lokasi' : 'Location'}</small>
+                      <strong>Indonesia</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <form
+                  className="contact-form contact-form-inline"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    setSent(true);
+                    e.target.reset();
+                  }}
+                >
+                  <div className="contact-form-grid">
+                    <input id="contact-name" name="name" required placeholder={ACTION.form.name[L]} />
+                    <input id="contact-email" name="email" required type="email" placeholder={ACTION.form.email[L]} />
+                  </div>
+                  <textarea id="contact-msg" name="message" required rows="3" placeholder={ACTION.form.msg[L]} />
+                  <button className="btn" type="submit">
+                    <Send size={15} />
+                    <span>{ACTION.form.send[L]}</span>
+                  </button>
+                  {sent && <p className="ok">{ACTION.form.thanks[L]}</p>}
+                </form>
+              </div>
+            </ScrollReveal>
+
+            <ScrollReveal fromX={24} fromY={40} className="contact-lanyard-col">
+              <TeamLanyardCards lang={L} />
+            </ScrollReveal>
+          </div>
         </div>
         <footer className="footer">
           <div className="container footer-inner">
             <div className="footer-grid">
               <div className="footer-brand">
                 <div className="footer-brand-head">
-                  <img src="/kalabumi-logo.jpg" alt="Kalabumi" className="footer-logo" />
+                  <img src="/kalabumi-logo.png" alt="Kalabumi" className="footer-logo" />
                   <div>
                     <strong>KALABUMI</strong>
                     <span>{L === 'id' ? 'Edukasi Krisis Bumi' : 'Earth Crisis Education'}</span>
@@ -956,9 +1078,11 @@ export default function App() {
           >
             <motion.div
               className="fan-modal detail-modal-card"
-              initial={{ opacity: 0, scale: 0.92, y: 18 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.94, y: 12 }}
+              initial={{ opacity: 0, rotateY: -90, scale: 0.86 }}
+              animate={{ opacity: 1, rotateY: 0, scale: 1 }}
+              exit={{ opacity: 0, rotateY: 90, scale: 0.88 }}
+              transition={{ type: 'spring', stiffness: 260, damping: 24, mass: 0.8 }}
+              style={{ transformStyle: 'preserve-3d' }}
             >
               <img src={detailModal.image} alt={detailModal.title} className="fan-modal-img" />
               <div className="fan-modal-body">

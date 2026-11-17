@@ -106,7 +106,7 @@ export default function MarineCreatureMap({ species, lang, chapterTitle, onOpenD
             <button
               key={s.key}
               type="button"
-              className={`marine-pin ${isActive ? 'is-active' : ''}`}
+              className={`marine-pin marine-pin-${s.key} ${isActive ? 'is-active' : ''}`}
               style={{
                 left: `${meta.x}%`,
                 top: `${meta.y}%`,
