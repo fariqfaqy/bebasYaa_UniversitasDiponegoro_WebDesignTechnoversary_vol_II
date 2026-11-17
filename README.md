@@ -1,4 +1,4 @@
-# KALABUMI — Portal Edukasi Interaktif Krisis Bumi
+# KALABUMI - Portal Edukasi Interaktif Krisis Bumi
 
 **KALABUMI** adalah website edukasi interaktif dwibahasa (**Indonesia / English**) yang mengajak pengunjung memahami tiga krisis lingkungan utama di bumi serta mendorong aksi nyata sehari-hari melalui visual origami, buku pop-up 3D, peta interaktif, grafik data, dan kuis gamifikasi.
 
