@@ -1105,8 +1105,14 @@ section { position: relative; }
   display: block;
 }
 @media (max-width: 860px) {
-  .flow-domino-wrap { grid-template-columns: 1fr; }
-  .flow-domino-hub { order: -1; }
+  .flow-domino-wrap {
+    grid-template-columns: minmax(0, 1fr) 128px minmax(0, 1fr);
+    gap: 12px;
+  }
+  .flow-domino-svg {
+    width: 124px;
+    height: 124px;
+  }
 }
 
 /* Ocean Species photo cards */
@@ -3093,17 +3099,50 @@ a.chip:hover { background: #facc15; color: #0f2438; border-color: #eab308; trans
   }
   /* Domino Hub & Region Tabs di Bab 3 */
   .flow-domino-wrap {
-    gap: 12px;
+    grid-template-columns: minmax(0, 1fr) 68px minmax(0, 1fr);
+    gap: 7px;
   }
   .flow-domino-col {
-    gap: 10px;
+    gap: 8px;
+    min-width: 0;
   }
   .flow-domino-card {
-    padding: 12px 14px;
+    padding: 9px 8px;
+    border-radius: 14px;
+    border-left-width: 3.5px;
+    min-width: 0;
+  }
+  .flow-canopy-head {
+    gap: 5px;
+    margin-bottom: 5px;
+  }
+  .flow-domino-card .flow-node {
+    width: 22px;
+    height: 22px;
+    font-size: 0.68rem;
+    flex-shrink: 0;
+  }
+  .flow-domino-card .flow-stage-label {
+    font-size: 0.56rem;
+    margin-bottom: 0;
+    letter-spacing: 0.03em;
+  }
+  .flow-domino-card .flow-step-text {
+    font-size: 0.7rem;
+    line-height: 1.28;
+    overflow-wrap: break-word;
+  }
+  .flow-domino-hub {
+    gap: 4px;
   }
   .flow-domino-svg {
-    width: 148px;
-    height: 148px;
+    width: 68px;
+    height: 68px;
+  }
+  .flow-hub-caption {
+    font-size: 0.54rem;
+    padding: 2px 5px;
+    white-space: nowrap;
   }
   .region-card .tabs {
     gap: 6px;
