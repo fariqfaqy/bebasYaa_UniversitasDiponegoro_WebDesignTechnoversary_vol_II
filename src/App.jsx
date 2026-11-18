@@ -892,6 +892,7 @@ export default function App() {
             onOpenDetail={(card) =>
               setDetailModal({
                 image: card.image,
+                imgPosition: card.imgPosition || (card.id === 'macaw' ? 'center top' : undefined),
                 badge: card.status[L],
                 title: card.name[L],
                 subtitle: card.habitat[L],
@@ -1084,7 +1085,12 @@ export default function App() {
               transition={{ type: 'spring', stiffness: 260, damping: 24, mass: 0.8 }}
               style={{ transformStyle: 'preserve-3d' }}
             >
-              <img src={detailModal.image} alt={detailModal.title} className="fan-modal-img" />
+              <img
+                src={detailModal.image}
+                alt={detailModal.title}
+                className="fan-modal-img"
+                style={detailModal.imgPosition ? { objectPosition: detailModal.imgPosition } : undefined}
+              />
               <div className="fan-modal-body">
                 <span className="fan-modal-badge">{detailModal.badge}</span>
                 <h4>{detailModal.title}</h4>

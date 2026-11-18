@@ -26,7 +26,7 @@ Website ini dirancang sebagai pengalaman bertutur visual (*scroll storytelling*)
    - **Kuis Evaluasi Bumi bergaya Kahoot**: timer 15 detik per soal, grid jawaban 2×2 berwarna dan berbentuk geometri, sistem skor cepat & *streak*, rincian skor per bab, serta animasi trofi dan konfeti saat skor 100%.
 7. **Kontak & Profil Tim (`#contact`)**:
    - Informasi kolaborasi dan formulir kirim pesan.
-   - **ID Card Lanyard Interaktif** pembuat Kalabumi yang dapat diklik dari ikon bulat dan ditarik-tarik dengan efek tali lentur.
+   - **ID Card Lanyard Interaktif** pembuat Kalabumi yang muncul otomatis dengan animasi tali saat di-scroll dan dapat ditarik-tarik dengan efek tali lentur.
 
 ---
 
@@ -58,8 +58,8 @@ Website ini dirancang sebagai pengalaman bertutur visual (*scroll storytelling*)
 ### Langkah Instalasi
 1. **Clone repositori**
    ```bash
-   git clone https://github.com/fariqfaqy/alamkuy.git
-   cd alamkuy
+   git clone https://github.com/fariqfaqy/kalabumi.git
+   cd kalabumi
    ```
 
 2. **Install dependensi**

@@ -600,6 +600,7 @@ export const FOREST = {
         habitat: { id: 'Pohon Tinggi Hutan Hujan Amazon', en: 'Emergent Amazon Canopy' },
         status: { id: 'TERDESAK', en: 'HABITAT LOSS' },
         image: WM('Scarlet_Macaw_(Ara_macao).jpg', 700),
+        imgPosition: 'center top',
         detail: {
           id: 'Burung paruh bengkok berwarna cerah yang bersarang di lubang pohon tua raksasa. Penebangan pohon tua menghilangkan tempat bersarangnya.',
           en: 'Brightly coloured macaw that nests in cavities of giant old-growth trees. Logging removes its nesting sites.',

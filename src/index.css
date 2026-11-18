@@ -1617,6 +1617,13 @@ a.chip:hover { background: #facc15; color: #0f2438; border-color: #eab308; trans
   object-fit: cover;
   display: block;
 }
+.fan-card-macaw .fan-photo img,
+.fan-photo img[src*="Scarlet_Macaw"],
+.fan-photo img[src*="macao"],
+.fan-modal-img[src*="Scarlet_Macaw"],
+.fan-modal-img[src*="macao"] {
+  object-position: center top !important;
+}
 .fan-cta {
   position: absolute;
   left: 50%;
@@ -1948,8 +1955,96 @@ a.chip:hover { background: #facc15; color: #0f2438; border-color: #eab308; trans
   .hero-card { height: 210px; }
   .grid3, .stats, .about-cards { grid-template-columns: 1fr; }
   .grid4 { grid-template-columns: 1fr 1fr; }
-  .flow-pipeline { padding-bottom: 12px; }
-  .flow ol { flex-direction: column; }
+  .flow-pipeline {
+    position: relative;
+    padding-bottom: 24px;
+  }
+  .flow-pipeline ol {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  /* Garis putus-putus vertikal mobile seperti di laptop */
+  .flow-pipeline ol::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3.5px;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      rgba(15, 36, 56, 0.2) 0px,
+      rgba(15, 36, 56, 0.2) 6px,
+      transparent 6px,
+      transparent 12px
+    );
+    z-index: 1;
+    pointer-events: none;
+  }
+  .flow-pipeline .flow-step {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin: 0;
+  }
+  .flow-pipeline .flow-node-wrap {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    justify-content: center;
+  }
+  .flow-pipeline .flow-node {
+    position: relative;
+    z-index: 3;
+    background: #ffffff;
+  }
+  .flow-pipeline .flow-card-body {
+    position: relative;
+    z-index: 3;
+    background: #ffffff;
+  }
+  /* Garis aktif putus-putus berwarna saat tahap dilewati / aktif */
+  .flow-pipeline .flow-step.is-passed .flow-node-wrap::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3.5px;
+    height: 14px;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      var(--step-color, var(--blue)) 0px,
+      var(--step-color, var(--blue)) 6px,
+      transparent 6px,
+      transparent 12px
+    );
+    z-index: 4;
+    pointer-events: none;
+  }
+  .flow-pipeline .flow-step.is-passed:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    bottom: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3.5px;
+    height: 24px;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      var(--step-color, var(--blue)) 0px,
+      var(--step-color, var(--blue)) 6px,
+      transparent 6px,
+      transparent 12px
+    );
+    z-index: 4;
+    pointer-events: none;
+  }
   .flow-zigzag-svg, .flow-arrow { display: none; }
   .flow-step.is-up,
   .flow-step.is-down,
@@ -3229,7 +3324,7 @@ a.chip:hover { background: #facc15; color: #0f2438; border-color: #eab308; trans
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  min-height: 150px;
+  min-height: 380px;
 }
 .lanyard-circle-btn {
   position: relative;

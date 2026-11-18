@@ -53,7 +53,7 @@ export default function ForestFanDeck({ deck, lang, onOpenDetail }) {
             return (
               <motion.div
                 key={card.id}
-                className={`fan-card fan-${card.color} ${isCenter ? 'is-center' : ''}`}
+                className={`fan-card fan-${card.color} fan-card-${card.id} ${isCenter ? 'is-center' : ''}`}
                 initial={false}
                 animate={{
                   x: offset * 170,
@@ -79,7 +79,12 @@ export default function ForestFanDeck({ deck, lang, onOpenDetail }) {
                 </div>
 
                 <div className="fan-photo">
-                  <img src={card.image} alt={card.name[lang]} loading="lazy" />
+                  <img
+                    src={card.image}
+                    alt={card.name[lang]}
+                    loading="lazy"
+                    style={card.imgPosition || card.id === 'macaw' ? { objectPosition: card.imgPosition || 'center top' } : undefined}
+                  />
                   {isCenter && <span className="fan-cta">{deck.cta[lang]}</span>}
                 </div>
               </motion.div>
