@@ -3324,73 +3324,16 @@ a.chip:hover { background: #facc15; color: #0f2438; border-color: #eab308; trans
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  min-height: 380px;
-}
-.lanyard-circle-btn {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  border-radius: 24px;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  cursor: pointer;
-  min-width: 165px;
-  transition: transform 0.2s;
-}
-.lanyard-circle-btn:hover {
-  transform: translateY(-2px);
-}
-.lanyard-circle-icon {
-  position: relative;
-  width: 68px;
-  height: 68px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: var(--card-accent, #0ea5e9);
-  color: #ffffff;
-  box-shadow: 0 10px 22px rgba(15, 36, 56, 0.18), 0 0 0 6px rgba(14, 165, 233, 0.14);
-}
-.lanyard-circle-name {
-  font-weight: 800;
-  font-size: 0.92rem;
-  color: var(--txt);
-}
-.lanyard-circle-role {
-  font-size: 0.72rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--card-accent, #0ea5e9);
-}
-.lanyard-close-btn {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: rgba(15, 36, 56, 0.1);
-  color: #0f2438;
-  display: grid;
-  place-items: center;
-  transition: background 0.16s, color 0.16s;
-}
-.lanyard-close-btn:hover {
-  background: #ef4444;
-  color: #ffffff;
+  min-height: 520px;
 }
 .lanyard-slot {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 46px;
+  padding-top: 48px;
+  width: 100%;
+  max-width: 310px;
 }
 .lanyard-anchor {
   position: absolute;
@@ -3407,149 +3350,270 @@ a.chip:hover { background: #facc15; color: #0f2438; border-color: #eab308; trans
   left: 50%;
   transform: translateX(-50%);
   width: 280px;
-  height: 80px;
+  height: 84px;
   overflow: visible;
   pointer-events: none;
   z-index: 1;
 }
-.lanyard-card {
+
+/* ================= DESAIN ID CARD SEPERTI FOTO REFERENSI ================= */
+.idcard-badge-wrap {
   position: relative;
   z-index: 3;
   width: 100%;
-  max-width: 310px;
-  border-radius: 20px;
+  max-width: 296px;
+  border-radius: 24px;
   background: #ffffff;
-  border: 1.5px solid var(--line);
-  box-shadow: 0 18px 38px rgba(15, 36, 56, 0.14);
+  border: 1.5px solid rgba(15, 36, 56, 0.12);
+  box-shadow: 0 20px 42px rgba(15, 36, 56, 0.16);
   cursor: grab;
   user-select: none;
   touch-action: none;
   overflow: hidden;
+  transition: box-shadow 0.2s;
 }
-.lanyard-card.is-dragging {
+.idcard-badge-wrap.is-dragging {
   z-index: 15;
-  box-shadow: 0 26px 52px rgba(15, 36, 56, 0.24);
+  box-shadow: 0 28px 56px rgba(15, 36, 56, 0.28);
 }
-.lanyard-clip {
+.idcard-top-hardware {
   position: relative;
-  height: 18px;
+  height: 22px;
   background: #f8fafc;
+  border-bottom: 1px solid rgba(15, 36, 56, 0.06);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
-.lanyard-clip-metal {
-  width: 34px;
+.idcard-metal-clip {
+  position: absolute;
+  top: -8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.idcard-clip-swivel {
+  width: 18px;
   height: 6px;
   border-radius: 999px;
-  background: linear-gradient(90deg, #94a3b8, #e2e8f0, #64748b);
+  background: linear-gradient(90deg, #94a3b8, #f8fafc, #64748b);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
-.lanyard-card-top {
+.idcard-clip-hook {
+  width: 10px;
+  height: 10px;
+  border: 2px solid #94a3b8;
+  border-top: none;
+  border-radius: 0 0 5px 5px;
+  background: transparent;
+}
+.idcard-slot-hole {
+  width: 36px;
+  height: 6px;
+  border-radius: 999px;
+  background: #cbd5e1;
+  border: 1px solid #94a3b8;
+  box-shadow: inset 0 2px 4px rgba(15, 36, 56, 0.35);
+  margin-top: 6px;
+}
+.idcard-inner-card {
+  position: relative;
+  background: linear-gradient(180deg, #fff7f8 0%, #ffffff 42%, #fff1f4 100%);
+  padding: 10px 14px 0;
+}
+.idcard-head-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 7px 16px;
-  color: #ffffff;
-  font-size: 0.7rem;
+  margin-bottom: 6px;
+  padding: 0 4px;
+}
+.idcard-head-brand {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+.idcard-kicker {
+  font-size: 0.58rem;
   font-weight: 800;
   letter-spacing: 0.08em;
+  color: #64748b;
+  text-transform: uppercase;
 }
-.lanyard-card-body {
-  padding: 16px;
+.idcard-org-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
 }
-.lanyard-profile-row {
+.idcard-head-badge {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 10px;
+  gap: 6px;
 }
-.lanyard-avatar {
+.idcard-mini-logo {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+.idcard-team-tag {
+  font-size: 0.64rem;
+  font-weight: 800;
+  background: var(--card-accent, #fb7185);
+  color: #ffffff;
+  padding: 2px 7px;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+  box-shadow: 0 2px 6px rgba(15, 36, 56, 0.12);
+}
+
+/* Frame Kubah Foto (Arch) */
+.idcard-photo-stage {
   position: relative;
-  width: 62px;
-  height: 62px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 2.5px solid var(--card-accent, #0ea5e9);
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  margin: 6px auto 0;
+  width: 100%;
 }
-.lanyard-avatar-svg {
+.idcard-sparkle {
   position: absolute;
-  inset: 0;
+  color: var(--card-accent, #fb7185);
+  pointer-events: none;
+  user-select: none;
+}
+.idcard-sparkle.sp-1 {
+  top: 12px;
+  left: 14px;
+  font-size: 1.15rem;
+}
+.idcard-sparkle.sp-2 {
+  top: 32px;
+  right: 14px;
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+.idcard-sparkle.sp-3 {
+  top: 86px;
+  left: 10px;
+  font-size: 0.78rem;
+  opacity: 0.75;
+}
+.idcard-sparkle.sp-4 {
+  top: 98px;
+  right: 12px;
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+.idcard-arch-frame {
+  position: relative;
+  width: 196px;
+  height: 218px;
+  border-radius: 98px 98px 0 0;
+  background: linear-gradient(180deg, #fce7ec 0%, #fbcfe8 100%);
+  border: 3.5px solid #ffffff;
+  box-shadow: 0 8px 22px rgba(15, 36, 56, 0.12), inset 0 2px 8px rgba(255, 255, 255, 0.6);
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.idcard-photo-img {
   width: 100%;
   height: 100%;
+  object-fit: cover;
+  display: block;
 }
-.lanyard-initials {
+
+/* Banner Melengkung Bawah (Deep Navy + Ornamen Batik Kawung) */
+.idcard-bottom-banner {
   position: relative;
-  z-index: 1;
-  font-family: 'Oswald', sans-serif;
-  font-size: 1.35rem;
-  font-weight: 700;
+  background: #0b1626;
+  border-radius: 40px 40px 0 0;
+  margin-top: -18px;
+  z-index: 2;
+  padding: 18px 16px 16px;
   color: #ffffff;
-  letter-spacing: 0.04em;
+  text-align: center;
+  border-top: 2.5px solid var(--card-accent, #fb7185);
+  box-shadow: 0 -4px 16px rgba(11, 22, 38, 0.28);
+  overflow: hidden;
 }
-.lanyard-role-pill {
-  display: inline-block;
-  font-size: 0.7rem;
+.idcard-batik-corner {
+  position: absolute;
+  bottom: 0;
+  width: 68px;
+  height: 68px;
+  pointer-events: none;
+  z-index: 1;
+}
+.idcard-batik-corner.is-left {
+  left: 0;
+}
+.idcard-batik-corner.is-right {
+  right: 0;
+}
+.idcard-banner-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.idcard-divisi-pill {
+  font-size: 0.62rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  background: #f1f5f9;
-  padding: 2px 9px;
+  letter-spacing: 0.08em;
+  color: var(--card-accent, #fb7185);
+  background: rgba(255, 255, 255, 0.09);
+  padding: 2px 10px;
   border-radius: 999px;
   margin-bottom: 4px;
 }
-.lanyard-identity h4 {
-  margin: 0;
-  font-size: 1.08rem;
-  line-height: 1.2;
-  color: var(--txt);
-}
-.lanyard-bio {
-  font-size: 0.82rem;
-  line-height: 1.48;
-  color: var(--mut);
-  margin: 0 0 12px;
-}
-.lanyard-email {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.78rem;
+.idcard-member-name {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.25rem;
   font-weight: 700;
-  color: var(--txt);
-  background: #f8fafc;
-  border: 1px solid var(--line);
-  padding: 5px 11px;
-  border-radius: 999px;
-  margin-bottom: 10px;
-  transition: border-color 0.18s;
+  letter-spacing: 0.02em;
+  margin: 0;
+  color: #ffffff;
+  line-height: 1.2;
 }
-.lanyard-email:hover {
-  border-color: var(--card-accent, #0ea5e9);
+.idcard-sub-info {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  font-weight: 600;
+  margin: 2px 0 8px;
 }
-.lanyard-socials {
+.idcard-social-links {
   display: flex;
+  gap: 7px;
+  justify-content: center;
   flex-wrap: wrap;
-  gap: 6px;
+  margin-top: 2px;
 }
-.lanyard-soc-btn {
+.idcard-soc-btn {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 5px 10px;
+  padding: 4px 11px;
   border-radius: 999px;
-  background: #f1f5f9;
-  color: #0f2438;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
   font-size: 0.72rem;
   font-weight: 700;
-  transition: background 0.18s, color 0.18s;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: all 0.18s ease;
 }
-.lanyard-soc-btn:hover {
-  background: var(--card-accent, #0ea5e9);
+.idcard-soc-btn:hover {
+  background: var(--card-accent, #fb7185);
   color: #ffffff;
+  border-color: var(--card-accent, #fb7185);
+  transform: translateY(-1.5px);
 }
 .lanyard-drag-hint {
   display: flex;
@@ -3557,11 +3621,11 @@ a.chip:hover { background: #facc15; color: #0f2438; border-color: #eab308; trans
   justify-content: center;
   gap: 5px;
   padding: 6px;
-  background: #f8fafc;
-  border-top: 1px solid var(--line);
-  font-size: 0.68rem;
+  background: #08111d;
+  color: #64748b;
+  font-size: 0.65rem;
   font-weight: 700;
-  color: var(--mut);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 @media (max-width: 720px) {
   .team-lanyard-grid {

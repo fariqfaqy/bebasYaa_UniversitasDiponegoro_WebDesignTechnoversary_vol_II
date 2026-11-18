@@ -7,14 +7,13 @@ const TEAM_MEMBERS = [
     id: 'fariq',
     code: 'KLB-001',
     name: 'Fariq Faqy Rozzaqy',
-    role: { id: 'Programmer', en: 'Programmer' },
-    accent: '#0ea5e9',
+    photo: '/team-fariq.jpg',
+    photoPos: 'center 20%',
+    division: { id: 'DIVISI PROGRAMMER', en: 'PROGRAMMER' },
+    role: { id: 'Lead Developer', en: 'Lead Developer' },
+    accent: '#38bdf8',
     strapColor: '#0284c7',
-    initials: 'FF',
-    bio: {
-      id: 'Merancang arsitektur interaktif, animasi web 3D, & performa Kalabumi.',
-      en: 'Engineered Kalabumi\'s interactive architecture, 3D book & smooth motion.',
-    },
+    badgeText: 'bebasYaa',
     socials: [
       { label: '@zzaqy._', href: 'https://www.instagram.com/zzaqy._/', icon: Instagram },
       { label: 'GitHub', href: 'https://github.com/fariqfaqy', icon: Github },
@@ -24,19 +23,51 @@ const TEAM_MEMBERS = [
     id: 'rizka',
     code: 'KLB-002',
     name: 'Rizka Mufida',
-    role: { id: 'Designer', en: 'Designer' },
-    accent: '#f97316',
-    strapColor: '#ea580c',
-    initials: 'RM',
-    bio: {
-      id: 'Menata identitas visual, palet warna, ilustrasi origami, & pengalaman pengguna.',
-      en: 'Crafted visual identity, color system, origami art direction & UX flow.',
-    },
+    photo: '/team-rizka.jpg',
+    photoPos: '50% 28%',
+    division: { id: 'DIVISI DESIGNER', en: 'DESIGNER' },
+    role: { id: 'UI/UX & Visual Artist', en: 'UI/UX & Visual Artist' },
+    accent: '#fb7185',
+    strapColor: '#e11d48',
+    badgeText: 'bebasYaa',
     socials: [
       { label: '@mfda_a', href: 'https://www.instagram.com/mfda_a/', icon: Instagram },
     ],
   },
 ];
+
+function BatikCorner({ side = 'left', color = '#fb7185' }) {
+  const isLeft = side === 'left';
+  return (
+    <svg
+      viewBox="0 0 80 80"
+      className={`idcard-batik-corner is-${side}`}
+      aria-hidden="true"
+    >
+      <g opacity="0.88">
+        <circle cx={isLeft ? 0 : 80} cy="80" r="38" fill="rgba(255,255,255,0.08)" />
+        <circle cx={isLeft ? 0 : 80} cy="80" r="24" fill={color} opacity="0.22" />
+        <ellipse
+          cx={isLeft ? 24 : 56}
+          cy="56"
+          rx="18"
+          ry="9"
+          transform={`rotate(${isLeft ? -45 : 45} ${isLeft ? 24 : 56} 56)`}
+          fill={color}
+          opacity="0.85"
+        />
+        <ellipse cx={isLeft ? 40 : 40} cy="80" rx="14" ry="7" fill="#ffffff" opacity="0.35" />
+        <ellipse cx={isLeft ? 0 : 80} cy="40" rx="7" ry="14" fill="#ffffff" opacity="0.35" />
+        <circle cx={isLeft ? 26 : 54} cy="54" r="5" fill="#ffffff" />
+        <circle cx={isLeft ? 26 : 54} cy="54" r="2.5" fill="#0b1626" />
+        <circle cx={isLeft ? 12 : 68} cy="36" r="2.2" fill={color} />
+        <circle cx={isLeft ? 36 : 44} cy="60" r="2.2" fill={color} />
+        <circle cx={isLeft ? 22 : 58} cy="74" r="2.2" fill="#ffffff" />
+        <circle cx={isLeft ? 6 : 74} cy="58" r="2" fill="#ffffff" />
+      </g>
+    </svg>
+  );
+}
 
 function LanyardIdCard({ member, lang, index }) {
   const [dragging, setDragging] = useState(false);
@@ -44,22 +75,22 @@ function LanyardIdCard({ member, lang, index }) {
   const y = useMotionValue(0);
 
   // Kemiringan kartu & tali lanyard lentur mengikuti tarikan pengguna
-  const rotate = useTransform(x, [-140, 0, 140], [18, 0, -18]);
+  const rotate = useTransform(x, [-140, 0, 140], [15, 0, -15]);
   const strapPath = useTransform([x, y], ([lx, ly]) => {
     const endX = 140 + lx;
-    const endY = 52 + ly;
+    const endY = 54 + ly;
     const ctrlX = 140 + lx * 0.22;
-    const ctrlY = Math.max(20, endY * 0.65);
-    return `M 140 6 Q ${ctrlX} ${ctrlY} ${endX} ${endY}`;
+    const ctrlY = Math.max(22, endY * 0.65);
+    return `M 140 0 Q ${ctrlX} ${ctrlY} ${endX} ${endY}`;
   });
 
   return (
     <div className="lanyard-slot-wrap">
       <motion.div
         className="lanyard-slot"
-        initial={{ y: -50, opacity: 0 }}
+        initial={{ y: -60, opacity: 0 }}
         whileInView={{ y: 0, opacity: 1 }}
-        viewport={{ once: true, amount: 0.25 }}
+        viewport={{ once: true, amount: 0.2 }}
         transition={{
           type: 'spring',
           stiffness: 140,
@@ -67,47 +98,50 @@ function LanyardIdCard({ member, lang, index }) {
           delay: index * 0.2,
         }}
       >
-        {/* Jangkar tali lanyard di bagian atas */}
+        {/* Jangkar tali lanyard 1 tali di bagian atas */}
         <div className="lanyard-anchor" style={{ background: member.strapColor }} aria-hidden="true" />
 
-        {/* Tali lanyard meluncur keluar dari atas saat scroll & lentur mengikuti tarikan */}
-        <svg viewBox="0 0 280 80" className="lanyard-strap-svg" aria-hidden="true">
+        {/* 1 Tali Lanyard elastis dengan corak jahitan khas kartu lanyard */}
+        <svg viewBox="0 0 280 84" className="lanyard-strap-svg" aria-hidden="true">
+          <motion.path
+            d={strapPath}
+            fill="none"
+            stroke="rgba(15, 36, 56, 0.15)"
+            strokeWidth="22"
+            strokeLinecap="round"
+            initial={{ pathLength: 0, opacity: 0 }}
+            whileInView={{ pathLength: 1, opacity: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: index * 0.2 }}
+          />
           <motion.path
             d={strapPath}
             fill="none"
             stroke={member.strapColor}
-            strokeWidth="12"
+            strokeWidth="18"
             strokeLinecap="round"
             initial={{ pathLength: 0, opacity: 0 }}
             whileInView={{ pathLength: 1, opacity: 1 }}
-            viewport={{ once: true, amount: 0.25 }}
-            transition={{
-              duration: 0.7,
-              ease: [0.22, 1, 0.36, 1],
-              delay: index * 0.2,
-            }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: index * 0.2 }}
           />
           <motion.path
             d={strapPath}
             fill="none"
-            stroke="rgba(255,255,255,0.28)"
+            stroke="rgba(255, 255, 255, 0.42)"
             strokeWidth="3"
-            strokeDasharray="6 6"
+            strokeDasharray="6 5"
             strokeLinecap="round"
             initial={{ pathLength: 0, opacity: 0 }}
             whileInView={{ pathLength: 1, opacity: 1 }}
-            viewport={{ once: true, amount: 0.25 }}
-            transition={{
-              duration: 0.7,
-              ease: [0.22, 1, 0.36, 1],
-              delay: index * 0.2,
-            }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: index * 0.2 }}
           />
         </svg>
 
-        {/* Kartu ID turun halus bersama tali, lalu sangat lentur saat ditarik & dilepas */}
+        {/* Kartu ID Card bergaya persis referensi foto */}
         <motion.div
-          className={`lanyard-card ${dragging ? 'is-dragging' : ''}`}
+          className={`idcard-badge-wrap ${dragging ? 'is-dragging' : ''}`}
           style={{ x, y, rotate, '--card-accent': member.accent }}
           drag
           dragConstraints={{ left: -140, right: 140, top: -30, bottom: 160 }}
@@ -119,61 +153,77 @@ function LanyardIdCard({ member, lang, index }) {
           onDragStart={() => setDragging(true)}
           onDragEnd={() => setDragging(false)}
         >
-          {/* Klip logam lanyard */}
-          <div className="lanyard-clip">
-            <span className="lanyard-clip-metal" aria-hidden="true" />
+          {/* Klip Gantungan Logam & Lubang Slot Oval ID Card */}
+          <div className="idcard-top-hardware" aria-hidden="true">
+            <div className="idcard-metal-clip">
+              <span className="idcard-clip-swivel" />
+              <span className="idcard-clip-hook" />
+            </div>
+            <div className="idcard-slot-hole" />
           </div>
 
-          {/* Header strip ID Card */}
-          <div className="lanyard-card-top" style={{ background: member.accent }}>
-            <span>KALABUMI CREW</span>
-            <strong>{member.code}</strong>
-          </div>
-
-          <div className="lanyard-card-body">
-            <div className="lanyard-profile-row">
-              <div className="lanyard-avatar" style={{ borderColor: member.accent }}>
-                <svg viewBox="0 0 80 80" className="lanyard-avatar-svg" aria-hidden="true">
-                  <defs>
-                    <linearGradient id={`av-${member.id}`} x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stopColor={member.accent} />
-                      <stop offset="100%" stopColor="#0f2438" />
-                    </linearGradient>
-                  </defs>
-                  <rect width="80" height="80" fill={`url(#av-${member.id})`} />
-                  <polygon points="0,80 40,46 80,80" fill="rgba(255,255,255,0.16)" />
-                  <circle cx="40" cy="30" r="14" fill="rgba(255,255,255,0.24)" />
-                </svg>
-                <span className="lanyard-initials">{member.initials}</span>
+          <div className="idcard-inner-card">
+            {/* Header: Judul Kiri & Logo Kanan */}
+            <div className="idcard-head-row">
+              <div className="idcard-head-brand">
+                <span className="idcard-kicker">ASISTENSI MENGAJAR</span>
+                <span className="idcard-org-title">KALABUMI</span>
               </div>
-
-              <div className="lanyard-identity">
-                <span className="lanyard-role-pill" style={{ color: member.accent }}>
-                  {member.role[lang]}
-                </span>
-                <h4>{member.name}</h4>
+              <div className="idcard-head-badge">
+                <img src="/kalabumi-logo.png" alt="Kalabumi" className="idcard-mini-logo" />
+                <span className="idcard-team-tag">{member.badgeText}</span>
               </div>
             </div>
 
-            <p className="lanyard-bio">{member.bio[lang]}</p>
+            {/* Frame Foto Kubah / Arch dengan Bintang Berkilau */}
+            <div className="idcard-photo-stage">
+              <span className="idcard-sparkle sp-1">✦</span>
+              <span className="idcard-sparkle sp-2">✧</span>
+              <span className="idcard-sparkle sp-3">✦</span>
+              <span className="idcard-sparkle sp-4">✧</span>
 
-            <div className="lanyard-socials" onPointerDown={(e) => e.stopPropagation()}>
-              {member.socials.map((soc) => {
-                const Icon = soc.icon;
-                return (
-                  <a
-                    key={soc.label}
-                    href={soc.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="lanyard-soc-btn"
-                    aria-label={`${member.name} ${soc.label}`}
-                  >
-                    <Icon size={14} />
-                    <span>{soc.label}</span>
-                  </a>
-                );
-              })}
+              <div className="idcard-arch-frame">
+                <img
+                  src={member.photo}
+                  alt={member.name}
+                  className="idcard-photo-img"
+                  style={{ objectPosition: member.photoPos }}
+                  loading="eager"
+                />
+              </div>
+            </div>
+
+            {/* Banner Melengkung Bawah (Deep Navy + Ornamen Batik) */}
+            <div className="idcard-bottom-banner">
+              {/* Ornamen Batik Kawung Kiri & Kanan */}
+              <BatikCorner side="left" color={member.accent} />
+              <BatikCorner side="right" color={member.accent} />
+
+              <div className="idcard-banner-content">
+                <span className="idcard-divisi-pill">{member.division[lang]}</span>
+                <h4 className="idcard-member-name">{member.name}</h4>
+                <p className="idcard-sub-info">{member.role[lang]} · TIM {member.badgeText}</p>
+
+                {/* Tombol Media Sosial yang Bersih */}
+                <div className="idcard-social-links" onPointerDown={(e) => e.stopPropagation()}>
+                  {member.socials.map((soc) => {
+                    const Icon = soc.icon;
+                    return (
+                      <a
+                        key={soc.label}
+                        href={soc.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="idcard-soc-btn"
+                        aria-label={`${member.name} ${soc.label}`}
+                      >
+                        <Icon size={13} />
+                        <span>{soc.label}</span>
+                      </a>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
 
