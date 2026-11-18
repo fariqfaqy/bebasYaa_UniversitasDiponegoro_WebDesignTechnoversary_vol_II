@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
+import { motion, AnimatePresence, useScroll, useSpring, useTransform } from 'motion/react';
 
 const toVisibility = (v) => (v <= 0.005 ? 'hidden' : 'visible');
 
@@ -377,6 +377,7 @@ function OrigamiEcoVilla({ x, y, scale = 1 }) {
 
 export default function SceneStage({ mouseX, mouseY, heroKey = 'climate' }) {
   const { scrollYProgress } = useScroll();
+  const smoothScroll = useSpring(scrollYProgress, { stiffness: 160, damping: 26, mass: 0.25 });
 
   const bgTiltX = useTransform(mouseX, [-1, 1], [-8, 8]);
   const bgTiltY = useTransform(mouseY, [-1, 1], [-6, 6]);
@@ -386,60 +387,56 @@ export default function SceneStage({ mouseX, mouseY, heroKey = 'climate' }) {
   const fgTiltY = useTransform(mouseY, [-1, 1], [-16, 16]);
 
   // --- SCENE 1: HERO (0.00 -> 0.17) ---
-  const s1Opacity = useTransform(scrollYProgress, [0, 0.11, 0.17], [1, 1, 0]);
+  const s1Opacity = useTransform(smoothScroll, [0, 0.11, 0.17], [1, 1, 0]);
   const s1Vis = useTransform(s1Opacity, toVisibility);
-  const s1MountainY = useTransform(scrollYProgress, [0, 0.17], [0, 85]);
-  const s1MountainScale = useTransform(scrollYProgress, [0, 0.17], [1.02, 1.12]);
-  const s1CabinY = useTransform(scrollYProgress, [0, 0.16], [0, 195]);
-  const s1CabinOpacity = useTransform(scrollYProgress, [0, 0.1, 0.16], [1, 1, 0]);
-  const s1TreesX = useTransform(scrollYProgress, [0, 0.16], [0, 130]);
-  const s1TreesY = useTransform(scrollYProgress, [0, 0.16], [0, 110]);
-  const s1HillY = useTransform(scrollYProgress, [0, 0.16], [0, 240]);
+  const s1MountainY = useTransform(smoothScroll, [0, 0.17], [0, 85]);
+  const s1CabinY = useTransform(smoothScroll, [0, 0.16], [0, 195]);
+  const s1CabinOpacity = useTransform(smoothScroll, [0, 0.1, 0.16], [1, 1, 0]);
+  const s1TreesX = useTransform(smoothScroll, [0, 0.16], [0, 130]);
+  const s1TreesY = useTransform(smoothScroll, [0, 0.16], [0, 110]);
+  const s1HillY = useTransform(smoothScroll, [0, 0.16], [0, 240]);
 
   // --- SCENE 2: TENTANG (0.11 -> 0.31) ---
-  const s2Opacity = useTransform(scrollYProgress, [0.1, 0.16, 0.25, 0.31], [0, 1, 1, 0]);
+  const s2Opacity = useTransform(smoothScroll, [0.1, 0.16, 0.25, 0.31], [0, 1, 1, 0]);
   const s2Vis = useTransform(s2Opacity, toVisibility);
-  const s2FarY = useTransform(scrollYProgress, [0.1, 0.17, 0.25, 0.31], [85, 0, 0, -55]);
-  const s2MidY = useTransform(scrollYProgress, [0.11, 0.18, 0.25, 0.31], [140, 0, 0, -80]);
-  const s2TreesX = useTransform(scrollYProgress, [0.11, 0.18, 0.25, 0.31], [-70, 0, 0, 70]);
-  const s2FgY = useTransform(scrollYProgress, [0.12, 0.19, 0.25, 0.31], [185, 0, 0, 130]);
+  const s2FarY = useTransform(smoothScroll, [0.1, 0.17, 0.25, 0.31], [85, 0, 0, -55]);
+  const s2MidY = useTransform(smoothScroll, [0.11, 0.18, 0.25, 0.31], [140, 0, 0, -80]);
+  const s2TreesX = useTransform(smoothScroll, [0.11, 0.18, 0.25, 0.31], [-70, 0, 0, 70]);
+  const s2FgY = useTransform(smoothScroll, [0.12, 0.19, 0.25, 0.31], [185, 0, 0, 130]);
 
   // --- SCENE 3: BAB 1 IKLIM & ES (0.25 -> 0.54) ---
-  const s3Opacity = useTransform(scrollYProgress, [0.24, 0.31, 0.48, 0.54], [0, 1, 1, 0]);
+  const s3Opacity = useTransform(smoothScroll, [0.24, 0.31, 0.48, 0.54], [0, 1, 1, 0]);
   const s3Vis = useTransform(s3Opacity, toVisibility);
-  const s3PeaksY = useTransform(scrollYProgress, [0.24, 0.32, 0.48, 0.54], [90, 0, 0, -50]);
-  const s3ChaletY = useTransform(scrollYProgress, [0.25, 0.33, 0.48, 0.54], [135, 0, 0, -75]);
-  const s3ChaletScale = useTransform(scrollYProgress, [0.25, 0.34], [1.08, 1]);
-  const s3IceFloeX = useTransform(scrollYProgress, [0.25, 0.4, 0.54], [-80, 0, 85]);
-  const s3HikersY = useTransform(scrollYProgress, [0.26, 0.35, 0.48, 0.54], [185, 0, 0, 125]);
-  const s3BridgeY = useTransform(scrollYProgress, [0.46, 0.53], [280, 0]);
-  const s3BridgeOpacity = useTransform(scrollYProgress, [0.46, 0.5, 0.54], [0, 1, 0]);
+  const s3PeaksY = useTransform(smoothScroll, [0.24, 0.32, 0.48, 0.54], [90, 0, 0, -50]);
+  const s3ChaletY = useTransform(smoothScroll, [0.25, 0.33, 0.48, 0.54], [135, 0, 0, -75]);
+  const s3IceFloeX = useTransform(smoothScroll, [0.25, 0.4, 0.54], [-80, 0, 85]);
+  const s3HikersY = useTransform(smoothScroll, [0.26, 0.35, 0.48, 0.54], [185, 0, 0, 125]);
+  const s3BridgeY = useTransform(smoothScroll, [0.46, 0.53], [280, 0]);
+  const s3BridgeOpacity = useTransform(smoothScroll, [0.46, 0.5, 0.54], [0, 1, 0]);
 
   // --- SCENE 4: BAB 2 LAUTAN (0.48 -> 0.72) ---
-  const s4Opacity = useTransform(scrollYProgress, [0.47, 0.53, 0.66, 0.72], [0, 1, 1, 0]);
+  const s4Opacity = useTransform(smoothScroll, [0.47, 0.53, 0.66, 0.72], [0, 1, 1, 0]);
   const s4Vis = useTransform(s4Opacity, toVisibility);
-  const s4FarY = useTransform(scrollYProgress, [0.48, 0.55, 0.66, 0.72], [75, 0, 0, -45]);
-  const s4WhaleX = useTransform(scrollYProgress, [0.48, 0.56, 0.66, 0.72], [-120, 0, 0, 110]);
-  const s4WhaleY = useTransform(scrollYProgress, [0.48, 0.56, 0.66, 0.72], [125, 0, 0, -65]);
-  const s4TurtleX = useTransform(scrollYProgress, [0.49, 0.57, 0.66, 0.72], [115, 0, 0, -100]);
-  const s4ReefY = useTransform(scrollYProgress, [0.49, 0.57, 0.66, 0.72], [185, 0, 0, 150]);
+  const s4FarY = useTransform(smoothScroll, [0.48, 0.55, 0.66, 0.72], [75, 0, 0, -45]);
+  const s4WhaleX = useTransform(smoothScroll, [0.48, 0.56, 0.66, 0.72], [-120, 0, 0, 110]);
+  const s4WhaleY = useTransform(smoothScroll, [0.48, 0.56, 0.66, 0.72], [125, 0, 0, -65]);
+  const s4TurtleX = useTransform(smoothScroll, [0.49, 0.57, 0.66, 0.72], [115, 0, 0, -100]);
+  const s4ReefY = useTransform(smoothScroll, [0.49, 0.57, 0.66, 0.72], [185, 0, 0, 150]);
 
   // --- SCENE 5: BAB 3 HUTAN (0.66 -> 0.89) ---
-  const s5Opacity = useTransform(scrollYProgress, [0.65, 0.71, 0.83, 0.89], [0, 1, 1, 0]);
+  const s5Opacity = useTransform(smoothScroll, [0.65, 0.71, 0.83, 0.89], [0, 1, 1, 0]);
   const s5Vis = useTransform(s5Opacity, toVisibility);
-  const s5ForestY = useTransform(scrollYProgress, [0.66, 0.73, 0.86], [70, 0, -35]);
-  const s5TowerY = useTransform(scrollYProgress, [0.66, 0.74, 0.83, 0.89], [145, 0, 0, 155]);
-  const s5DeerY = useTransform(scrollYProgress, [0.67, 0.75, 0.83, 0.89], [175, 0, 0, 185]);
-  const s5BridgeCliffY = useTransform(scrollYProgress, [0.81, 0.89], [310, 0]);
-  const s5BridgeCliffOpacity = useTransform(scrollYProgress, [0.81, 0.85, 0.9], [0, 1, 0]);
+  const s5ForestY = useTransform(smoothScroll, [0.66, 0.73, 0.86], [70, 0, -35]);
+  const s5TowerY = useTransform(smoothScroll, [0.66, 0.74, 0.83, 0.89], [145, 0, 0, 155]);
+  const s5DeerY = useTransform(smoothScroll, [0.67, 0.75, 0.83, 0.89], [175, 0, 0, 185]);
+  const s5BridgeCliffY = useTransform(smoothScroll, [0.81, 0.89], [310, 0]);
+  const s5BridgeCliffOpacity = useTransform(smoothScroll, [0.81, 0.85, 0.9], [0, 1, 0]);
 
   // --- SCENE 6: AKSI NYATA (0.83 -> 1.00) ---
-  const s6Opacity = useTransform(scrollYProgress, [0.83, 0.89], [0, 1]);
+  const s6Opacity = useTransform(smoothScroll, [0.83, 0.89], [0, 1]);
   const s6Vis = useTransform(s6Opacity, toVisibility);
-  const s6SunScale = useTransform(scrollYProgress, [0.83, 0.96], [0.85, 1.03]);
-  const s6HillsY = useTransform(scrollYProgress, [0.83, 0.93], [100, 0]);
-  const s6VillaY = useTransform(scrollYProgress, [0.84, 0.95], [150, 0]);
-  const s6VillaScale = useTransform(scrollYProgress, [0.84, 0.96], [1.06, 1]);
+  const s6HillsY = useTransform(smoothScroll, [0.83, 0.93], [100, 0]);
+  const s6VillaY = useTransform(smoothScroll, [0.84, 0.95], [150, 0]);
 
   return (
     <div className="stage" aria-hidden="true">
@@ -506,7 +503,7 @@ export default function SceneStage({ mouseX, mouseY, heroKey = 'climate' }) {
               transition={{ duration: 0.7, ease: 'easeInOut' }}
               className="stage-scene scene-bg-hero-climate"
             >
-              <motion.div style={{ y: s1MountainY, scale: s1MountainScale, x: bgTiltX }} className="stage-layer">
+              <motion.div style={{ y: s1MountainY, x: bgTiltX }} className="stage-layer">
                 <svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMax slice" className="stage-svg">
                   <polygon points="1090,115 1155,152 1155,228 1090,265 1025,228 1025,152" fill="#f97316" opacity="0.7" className="anim-glow" />
                   <polygon points="1090,138 1135,164 1135,216 1090,242 1045,216 1045,164" fill="#fde047" opacity="0.9" />
@@ -559,7 +556,7 @@ export default function SceneStage({ mouseX, mouseY, heroKey = 'climate' }) {
               transition={{ duration: 0.7, ease: 'easeInOut' }}
               className="stage-scene scene-bg-hero-ocean"
             >
-              <motion.div style={{ y: s1MountainY, scale: s1MountainScale, x: bgTiltX }} className="stage-layer">
+              <motion.div style={{ y: s1MountainY, x: bgTiltX }} className="stage-layer">
                 <svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMax slice" className="stage-svg">
                   <polygon points="240,0 350,0 560,800 90,800" fill="#ffffff" opacity="0.14" />
                   <polygon points="780,0 890,0 1120,800 620,800" fill="#ffffff" opacity="0.12" />
@@ -600,7 +597,7 @@ export default function SceneStage({ mouseX, mouseY, heroKey = 'climate' }) {
               transition={{ duration: 0.7, ease: 'easeInOut' }}
               className="stage-scene scene-bg-hero-forest"
             >
-              <motion.div style={{ y: s1MountainY, scale: s1MountainScale, x: bgTiltX }} className="stage-layer">
+              <motion.div style={{ y: s1MountainY, x: bgTiltX }} className="stage-layer">
                 <svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMax slice" className="stage-svg">
                   <polygon points="-100,800 180,270 520,560" fill="#166534" stroke="rgba(255,255,255,0.22)" />
                   <polygon points="420,800 760,310 1120,620" fill="#15803d" stroke="rgba(255,255,255,0.22)" />
@@ -654,7 +651,7 @@ export default function SceneStage({ mouseX, mouseY, heroKey = 'climate' }) {
           </svg>
         </motion.div>
 
-        <motion.div style={{ y: s3ChaletY, scale: s3ChaletScale, x: midTiltX }} className="stage-layer">
+        <motion.div style={{ y: s3ChaletY, x: midTiltX }} className="stage-layer">
           <svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMax slice" className="stage-svg">
             <polygon points="-50,820 -50,565 440,505 940,560 1500,520 1500,820" fill="#d8eaf2" stroke="rgba(255,255,255,0.6)" />
             <polygon points="-50,820 420,575 1080,605 1500,565 1500,820" fill="#edf5f9" />
@@ -817,7 +814,7 @@ export default function SceneStage({ mouseX, mouseY, heroKey = 'climate' }) {
           SCENE 6: AKSI NYATA
       ====================================================================== */}
       <motion.div style={{ opacity: s6Opacity, visibility: s6Vis }} className="stage-scene scene-bg-action">
-        <motion.div style={{ y: s6HillsY, scale: s6SunScale, x: bgTiltX }} className="stage-layer">
+        <motion.div style={{ y: s6HillsY, x: bgTiltX }} className="stage-layer">
           <svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMax slice" className="stage-svg">
             <g transform="translate(720, 250)">
               <polygon points="0,-130 92,-92 130,0 92,92 0,130 -92,92 -130,0 -92,-92" fill="#fde047" opacity="0.55" className="anim-spin-slow" />
@@ -834,7 +831,7 @@ export default function SceneStage({ mouseX, mouseY, heroKey = 'climate' }) {
           </svg>
         </motion.div>
 
-        <motion.div style={{ y: s6VillaY, scale: s6VillaScale, x: midTiltX }} className="stage-layer">
+        <motion.div style={{ y: s6VillaY, x: midTiltX }} className="stage-layer">
           <svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMax slice" className="stage-svg">
             <polygon points="-50,800 -50,460 140,420 290,495 460,450 650,505 880,445 1140,490 1340,405 1500,440 1500,800" fill="#14532d" stroke="rgba(255,255,255,0.3)" />
             <OrigamiSprout x={120} y={510} scale={0.95} />

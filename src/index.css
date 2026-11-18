@@ -678,8 +678,6 @@ section { position: relative; }
 .chapter, .action {
   padding: 100px 0;
   overflow-x: clip;
-  content-visibility: auto;
-  contain-intrinsic-size: auto 760px;
 }
 .chapter-glow {
   position: absolute;
@@ -3264,8 +3262,6 @@ a.chip:hover { background: #facc15; color: #0f2438; border-color: #eab308; trans
   z-index: 2;
   padding: 92px 0 0;
   overflow-x: clip;
-  content-visibility: auto;
-  contain-intrinsic-size: auto 720px;
 }
 .contact-head {
   margin-inline: auto;
