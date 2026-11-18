@@ -9,8 +9,7 @@ const TEAM_MEMBERS = [
     name: 'Fariq Faqy Rozzaqy',
     photo: '/team-fariq.jpg',
     photoPos: 'center 20%',
-    division: { id: 'DIVISI PROGRAMMER', en: 'PROGRAMMER' },
-    role: { id: 'Lead Developer', en: 'Lead Developer' },
+    role: { id: 'PROGRAMMER', en: 'PROGRAMMER' },
     accent: '#38bdf8',
     strapColor: '#0284c7',
     badgeText: 'bebasYaa',
@@ -25,8 +24,7 @@ const TEAM_MEMBERS = [
     name: 'Rizka Mufida',
     photo: '/team-rizka.jpg',
     photoPos: '50% 28%',
-    division: { id: 'DIVISI DESIGNER', en: 'DESIGNER' },
-    role: { id: 'UI/UX & Visual Artist', en: 'UI/UX & Visual Artist' },
+    role: { id: 'DESIGNER', en: 'DESIGNER' },
     accent: '#fb7185',
     strapColor: '#e11d48',
     badgeText: 'bebasYaa',
@@ -86,18 +84,7 @@ function LanyardIdCard({ member, lang, index }) {
 
   return (
     <div className="lanyard-slot-wrap">
-      <motion.div
-        className="lanyard-slot"
-        initial={{ y: -60, opacity: 0 }}
-        whileInView={{ y: 0, opacity: 1 }}
-        viewport={{ once: true, amount: 0.2 }}
-        transition={{
-          type: 'spring',
-          stiffness: 140,
-          damping: 18,
-          delay: index * 0.2,
-        }}
-      >
+      <div className="lanyard-slot">
         {/* Jangkar tali lanyard 1 tali di bagian atas */}
         <div className="lanyard-anchor" style={{ background: member.strapColor }} aria-hidden="true" />
 
@@ -112,7 +99,7 @@ function LanyardIdCard({ member, lang, index }) {
             initial={{ pathLength: 0, opacity: 0 }}
             whileInView={{ pathLength: 1, opacity: 1 }}
             viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: index * 0.2 }}
+            transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1], delay: index * 0.22 }}
           />
           <motion.path
             d={strapPath}
@@ -123,7 +110,7 @@ function LanyardIdCard({ member, lang, index }) {
             initial={{ pathLength: 0, opacity: 0 }}
             whileInView={{ pathLength: 1, opacity: 1 }}
             viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: index * 0.2 }}
+            transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1], delay: index * 0.22 }}
           />
           <motion.path
             d={strapPath}
@@ -135,104 +122,131 @@ function LanyardIdCard({ member, lang, index }) {
             initial={{ pathLength: 0, opacity: 0 }}
             whileInView={{ pathLength: 1, opacity: 1 }}
             viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: index * 0.2 }}
+            transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1], delay: index * 0.22 }}
           />
         </svg>
 
-        {/* Kartu ID Card bergaya persis referensi foto */}
+        {/* Kontainer Animasi Bergulir & Berayun 3D Saat Scroll Masuk Viewport */}
         <motion.div
-          className={`idcard-badge-wrap ${dragging ? 'is-dragging' : ''}`}
-          style={{ x, y, rotate, '--card-accent': member.accent }}
-          drag
-          dragConstraints={{ left: -140, right: 140, top: -30, bottom: 160 }}
-          dragElastic={0.72}
-          dragSnapToOrigin
-          dragTransition={{ bounceStiffness: 135, bounceDamping: 10 }}
-          whileHover={{ scale: 1.02 }}
-          whileDrag={{ scale: 1.03, cursor: 'grabbing' }}
-          onDragStart={() => setDragging(true)}
-          onDragEnd={() => setDragging(false)}
+          className="idcard-roll-container"
+          initial={{
+            y: -160,
+            opacity: 0,
+            rotateZ: index % 2 === 0 ? -16 : 16,
+            rotateX: 42,
+            scale: 0.86,
+          }}
+          whileInView={{
+            y: [-160, 26, -12, 4, 0],
+            opacity: [0, 1, 1, 1, 1],
+            rotateZ: index % 2 === 0 ? [-16, 11, -5, 2, 0] : [16, -11, 5, -2, 0],
+            rotateX: [42, -14, 6, -2, 0],
+            scale: [0.86, 1.04, 0.98, 1.01, 1],
+          }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{
+            duration: 1.25,
+            ease: [0.22, 1, 0.36, 1],
+            delay: index * 0.22,
+            times: [0, 0.48, 0.72, 0.88, 1],
+          }}
         >
-          {/* Klip Gantungan Logam & Lubang Slot Oval ID Card */}
-          <div className="idcard-top-hardware" aria-hidden="true">
-            <div className="idcard-metal-clip">
-              <span className="idcard-clip-swivel" />
-              <span className="idcard-clip-hook" />
-            </div>
-            <div className="idcard-slot-hole" />
-          </div>
-
-          <div className="idcard-inner-card">
-            {/* Header: Judul Kiri & Logo Kanan */}
-            <div className="idcard-head-row">
-              <div className="idcard-head-brand">
-                <span className="idcard-kicker">ASISTENSI MENGAJAR</span>
-                <span className="idcard-org-title">KALABUMI</span>
+          {/* Kartu ID Card Interaktif (Dapat ditarik-tarik secara lentur) */}
+          <motion.div
+            className={`idcard-badge-wrap ${dragging ? 'is-dragging' : ''}`}
+            style={{ x, y, rotate, '--card-accent': member.accent }}
+            drag
+            dragConstraints={{ left: -140, right: 140, top: -30, bottom: 160 }}
+            dragElastic={0.72}
+            dragSnapToOrigin
+            dragTransition={{ bounceStiffness: 135, bounceDamping: 10 }}
+            whileHover={{ scale: 1.02 }}
+            whileDrag={{ scale: 1.03, cursor: 'grabbing' }}
+            onDragStart={() => setDragging(true)}
+            onDragEnd={() => setDragging(false)}
+          >
+            {/* Klip Gantungan Logam & Lubang Slot Oval ID Card */}
+            <div className="idcard-top-hardware" aria-hidden="true">
+              <div className="idcard-metal-clip">
+                <span className="idcard-clip-swivel" />
+                <span className="idcard-clip-hook" />
               </div>
-              <div className="idcard-head-badge">
-                <img src="/kalabumi-logo.png" alt="Kalabumi" className="idcard-mini-logo" />
-                <span className="idcard-team-tag">{member.badgeText}</span>
-              </div>
-            </div>
-
-            {/* Frame Foto Kubah / Arch dengan Bintang Berkilau */}
-            <div className="idcard-photo-stage">
-              <span className="idcard-sparkle sp-1">✦</span>
-              <span className="idcard-sparkle sp-2">✧</span>
-              <span className="idcard-sparkle sp-3">✦</span>
-              <span className="idcard-sparkle sp-4">✧</span>
-
-              <div className="idcard-arch-frame">
-                <img
-                  src={member.photo}
-                  alt={member.name}
-                  className="idcard-photo-img"
-                  style={{ objectPosition: member.photoPos }}
-                  loading="eager"
-                />
-              </div>
+              <div className="idcard-slot-hole" />
             </div>
 
-            {/* Banner Melengkung Bawah (Deep Navy + Ornamen Batik) */}
-            <div className="idcard-bottom-banner">
-              {/* Ornamen Batik Kawung Kiri & Kanan */}
-              <BatikCorner side="left" color={member.accent} />
-              <BatikCorner side="right" color={member.accent} />
+            <div className="idcard-inner-card">
+              {/* Header: Bersih tanpa 'asistensi mengajar', hanya logo & identitas Kalabumi */}
+              <div className="idcard-head-row">
+                <div className="idcard-head-brand">
+                  <span className="idcard-org-title">KALABUMI</span>
+                  <span className="idcard-member-code">{member.code}</span>
+                </div>
+                <div className="idcard-head-badge">
+                  <img src="/kalabumi-logo.png" alt="Kalabumi" className="idcard-mini-logo" />
+                  <span className="idcard-team-tag">{member.badgeText}</span>
+                </div>
+              </div>
 
-              <div className="idcard-banner-content">
-                <span className="idcard-divisi-pill">{member.division[lang]}</span>
-                <h4 className="idcard-member-name">{member.name}</h4>
-                <p className="idcard-sub-info">{member.role[lang]} · TIM {member.badgeText}</p>
+              {/* Frame Foto Kubah / Arch dengan Bintang Berkilau */}
+              <div className="idcard-photo-stage">
+                <span className="idcard-sparkle sp-1">✦</span>
+                <span className="idcard-sparkle sp-2">✧</span>
+                <span className="idcard-sparkle sp-3">✦</span>
+                <span className="idcard-sparkle sp-4">✧</span>
 
-                {/* Tombol Media Sosial yang Bersih */}
-                <div className="idcard-social-links" onPointerDown={(e) => e.stopPropagation()}>
-                  {member.socials.map((soc) => {
-                    const Icon = soc.icon;
-                    return (
-                      <a
-                        key={soc.label}
-                        href={soc.href}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="idcard-soc-btn"
-                        aria-label={`${member.name} ${soc.label}`}
-                      >
-                        <Icon size={13} />
-                        <span>{soc.label}</span>
-                      </a>
-                    );
-                  })}
+                <div className="idcard-arch-frame">
+                  <img
+                    src={member.photo}
+                    alt={member.name}
+                    className="idcard-photo-img"
+                    style={{ objectPosition: member.photoPos }}
+                    loading="eager"
+                  />
+                </div>
+              </div>
+
+              {/* Banner Melengkung Bawah (Deep Navy + Ornamen Batik Kawung) */}
+              <div className="idcard-bottom-banner">
+                {/* Ornamen Batik Kawung Kiri & Kanan */}
+                <BatikCorner side="left" color={member.accent} />
+                <BatikCorner side="right" color={member.accent} />
+
+                <div className="idcard-banner-content">
+                  {/* Hanya 'PROGRAMMER' atau 'DESIGNER' tanpa kata 'DIVISI' */}
+                  <span className="idcard-divisi-pill">{member.role[lang]}</span>
+                  <h4 className="idcard-member-name">{member.name}</h4>
+                  <p className="idcard-sub-info">TIM {member.badgeText}</p>
+
+                  {/* Tombol Media Sosial yang Bersih */}
+                  <div className="idcard-social-links" onPointerDown={(e) => e.stopPropagation()}>
+                    {member.socials.map((soc) => {
+                      const Icon = soc.icon;
+                      return (
+                        <a
+                          key={soc.label}
+                          href={soc.href}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="idcard-soc-btn"
+                          aria-label={`${member.name} ${soc.label}`}
+                        >
+                          <Icon size={13} />
+                          <span>{soc.label}</span>
+                        </a>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="lanyard-drag-hint">
-            <Move size={11} />
-            <span>{lang === 'id' ? 'Tarik & lepaskan kartu' : 'Pull & release badge'}</span>
-          </div>
+            <div className="lanyard-drag-hint">
+              <Move size={11} />
+              <span>{lang === 'id' ? 'Tarik & lepaskan kartu' : 'Pull & release badge'}</span>
+            </div>
+          </motion.div>
         </motion.div>
-      </motion.div>
+      </div>
     </div>
   );
 }

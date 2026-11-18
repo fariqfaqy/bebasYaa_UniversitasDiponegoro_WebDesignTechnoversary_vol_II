@@ -3325,6 +3325,7 @@ a.chip:hover { background: #facc15; color: #0f2438; border-color: #eab308; trans
   justify-content: center;
   align-items: flex-start;
   min-height: 520px;
+  perspective: 1200px;
 }
 .lanyard-slot {
   position: relative;
@@ -3334,6 +3335,14 @@ a.chip:hover { background: #facc15; color: #0f2438; border-color: #eab308; trans
   padding-top: 48px;
   width: 100%;
   max-width: 310px;
+  transform-style: preserve-3d;
+}
+.idcard-roll-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  transform-style: preserve-3d;
+  transform-origin: top center;
 }
 .lanyard-anchor {
   position: absolute;
@@ -3434,8 +3443,8 @@ a.chip:hover { background: #facc15; color: #0f2438; border-color: #eab308; trans
   flex-direction: column;
   text-align: left;
 }
-.idcard-kicker {
-  font-size: 0.58rem;
+.idcard-member-code {
+  font-size: 0.62rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   color: #64748b;
