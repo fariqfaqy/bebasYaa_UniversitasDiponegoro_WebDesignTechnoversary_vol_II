@@ -68,19 +68,13 @@ function BatikCorner({ side = 'left', color = '#fb7185' }) {
 }
 
 function LanyardIdCard({ member, lang, index }) {
-  const [dragging, setDragging] = useState(false);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  // Kemiringan kartu & tali lanyard lentur mengikuti tarikan pengguna
+  // Kemiringan kartu & tali lanyard lentur 100% di GPU (tanpa re-render SVG path d)
   const rotate = useTransform(x, [-140, 0, 140], [15, 0, -15]);
-  const strapPath = useTransform([x, y], ([lx, ly]) => {
-    const endX = 140 + lx;
-    const endY = 54 + ly;
-    const ctrlX = 140 + lx * 0.22;
-    const ctrlY = Math.max(22, endY * 0.65);
-    return `M 140 0 Q ${ctrlX} ${ctrlY} ${endX} ${endY}`;
-  });
+  const strapRotate = useTransform(x, [-140, 0, 140], [-54, 0, 54]);
+  const strapScaleY = useTransform(y, [-30, 0, 160], [0.58, 1, 3.5]);
 
   return (
     <div className="lanyard-slot-wrap">
@@ -88,43 +82,18 @@ function LanyardIdCard({ member, lang, index }) {
         {/* Jangkar tali lanyard 1 tali di bagian atas */}
         <div className="lanyard-anchor" style={{ background: member.strapColor }} aria-hidden="true" />
 
-        {/* 1 Tali Lanyard elastis dengan corak jahitan khas kartu lanyard */}
-        <svg viewBox="0 0 280 84" className="lanyard-strap-svg" aria-hidden="true">
-          <motion.path
-            d={strapPath}
-            fill="none"
-            stroke="rgba(15, 36, 56, 0.15)"
-            strokeWidth="22"
-            strokeLinecap="round"
-            initial={{ pathLength: 0, opacity: 0 }}
-            whileInView={{ pathLength: 1, opacity: 1 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1], delay: index * 0.22 }}
-          />
-          <motion.path
-            d={strapPath}
-            fill="none"
-            stroke={member.strapColor}
-            strokeWidth="18"
-            strokeLinecap="round"
-            initial={{ pathLength: 0, opacity: 0 }}
-            whileInView={{ pathLength: 1, opacity: 1 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1], delay: index * 0.22 }}
-          />
-          <motion.path
-            d={strapPath}
-            fill="none"
-            stroke="rgba(255, 255, 255, 0.42)"
-            strokeWidth="3"
-            strokeDasharray="6 5"
-            strokeLinecap="round"
-            initial={{ pathLength: 0, opacity: 0 }}
-            whileInView={{ pathLength: 1, opacity: 1 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1], delay: index * 0.22 }}
-          />
-        </svg>
+        {/* 1 Tali Lanyard elastis GPU-accelerated dengan corak jahitan */}
+        <motion.div
+          className="lanyard-strap-gpu"
+          style={{ rotate: strapRotate, scaleY: strapScaleY }}
+          aria-hidden="true"
+        >
+          <svg viewBox="0 0 36 58" preserveAspectRatio="none" className="lanyard-strap-inner">
+            <line x1="18" y1="0" x2="18" y2="58" stroke="rgba(15, 36, 56, 0.14)" strokeWidth="22" strokeLinecap="round" />
+            <line x1="18" y1="0" x2="18" y2="58" stroke={member.strapColor} strokeWidth="18" strokeLinecap="round" />
+            <line x1="18" y1="2" x2="18" y2="56" stroke="rgba(255, 255, 255, 0.45)" strokeWidth="3" strokeDasharray="6 5" strokeLinecap="round" />
+          </svg>
+        </motion.div>
 
         {/* Kontainer Animasi Bergulir & Berayun 3D Saat Scroll Masuk Viewport */}
         <motion.div
@@ -153,17 +122,14 @@ function LanyardIdCard({ member, lang, index }) {
         >
           {/* Kartu ID Card Interaktif (Dapat ditarik-tarik secara lentur) */}
           <motion.div
-            className={`idcard-badge-wrap ${dragging ? 'is-dragging' : ''}`}
+            className="idcard-badge-wrap"
             style={{ x, y, rotate, '--card-accent': member.accent }}
             drag
             dragConstraints={{ left: -140, right: 140, top: -30, bottom: 160 }}
             dragElastic={0.72}
             dragSnapToOrigin
-            dragTransition={{ bounceStiffness: 135, bounceDamping: 10 }}
-            whileHover={{ scale: 1.02 }}
-            whileDrag={{ scale: 1.03, cursor: 'grabbing' }}
-            onDragStart={() => setDragging(true)}
-            onDragEnd={() => setDragging(false)}
+            dragTransition={{ bounceStiffness: 150, bounceDamping: 12 }}
+            whileDrag={{ scale: 1.02, cursor: 'grabbing' }}
           >
             {/* Klip Gantungan Logam & Lubang Slot Oval ID Card */}
             <div className="idcard-top-hardware" aria-hidden="true">

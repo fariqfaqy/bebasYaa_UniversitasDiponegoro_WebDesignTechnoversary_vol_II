@@ -120,11 +120,13 @@ function OrigamiFish({ x, y, scale = 1, c1 = '#facc15', c2 = '#f97316', flip = f
   const sx = flip ? -scale : scale;
   return (
     <g transform={`translate(${x}, ${y}) scale(${sx}, ${scale})`} stroke="rgba(255,255,255,0.45)" strokeWidth="0.8" strokeLinejoin="round">
-      <polygon points="0,0 32,-16 54,0 32,0" fill={c1} />
-      <polygon points="0,0 54,0 32,16" fill={c2} />
-      <polygon points="18,-9 28,-22 34,-11" fill={c2} />
-      <polygon points="0,0 -18,-13 -12,0" fill={c1} />
-      <polygon points="0,0 -18,13 -12,0" fill={c2} />
+      <g className="anim-bob-1">
+        <polygon points="0,0 32,-16 54,0 32,0" fill={c1} />
+        <polygon points="0,0 54,0 32,16" fill={c2} />
+        <polygon points="18,-9 28,-22 34,-11" fill={c2} />
+        <polygon points="0,0 -18,-13 -12,0" fill={c1} />
+        <polygon points="0,0 -18,13 -12,0" fill={c2} />
+      </g>
     </g>
   );
 }
