@@ -474,6 +474,7 @@ export default function App() {
   const smoothMouseY = useSpring(mouseY, { stiffness: 90, damping: 24, mass: 0.3 });
 
   useEffect(() => {
+    if (window.matchMedia && !window.matchMedia('(pointer: fine)').matches) return undefined;
     const onMove = (e) => {
       mouseX.set((e.clientX / window.innerWidth - 0.5) * 2);
       mouseY.set((e.clientY / window.innerHeight - 0.5) * 2);

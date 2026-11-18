@@ -496,8 +496,9 @@ export default function AboutPopUpBook({ activeIndex, onChangeIndex, onGoChapter
     camera.position.set(0, 4.35, 7.25);
     camera.lookAt(0, 0.48, 0);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    const isCompactViewport = window.innerWidth <= 768;
+    const renderer = new THREE.WebGLRenderer({ antialias: !isCompactViewport, alpha: true, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isCompactViewport ? 1.35 : 2));
     renderer.setSize(el.clientWidth, el.clientHeight);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFShadowMap;
@@ -511,7 +512,8 @@ export default function AboutPopUpBook({ activeIndex, onChangeIndex, onGoChapter
     const sun = new THREE.DirectionalLight('#fff6e5', 1.9);
     sun.position.set(4.8, 8.5, 5.5);
     sun.castShadow = true;
-    sun.shadow.mapSize.set(1024, 1024);
+    const shadowSize = isCompactViewport ? 512 : 1024;
+    sun.shadow.mapSize.set(shadowSize, shadowSize);
     sun.shadow.camera.near = 1;
     sun.shadow.camera.far = 22;
     sun.shadow.camera.left = -4.5;
@@ -747,10 +749,13 @@ export default function AboutPopUpBook({ activeIndex, onChangeIndex, onGoChapter
     const visObs = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
+          const wasInView = inView;
           inView = entry.isIntersecting;
           if (!entry.isIntersecting) {
             targetOpen = 0;
             openProgress = 0;
+          } else if (!wasInView && raf === 0) {
+            raf = requestAnimationFrame(animate);
           }
         });
       },
@@ -778,8 +783,11 @@ export default function AboutPopUpBook({ activeIndex, onChangeIndex, onGoChapter
     const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
     const animate = () => {
+      if (!inView && phase === 'idle') {
+        raf = 0;
+        return;
+      }
       raf = requestAnimationFrame(animate);
-      if (!inView && phase === 'idle') return;
       clock += 0.016;
 
       coverMat.color.lerp(targetColor, 0.08);

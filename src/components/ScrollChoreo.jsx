@@ -17,10 +17,10 @@ export function ScrollReveal({
 
   return (
     <Tag
-      initial={{ opacity: 0, x: fromX * 0.6, y: fromY, scale: scaleIn }}
+      initial={{ opacity: 0, x: fromX * 0.5, y: Math.min(fromY, 34), scale: scaleIn }}
       whileInView={{ opacity: 1, x: 0, y: 0, scale: 1 }}
-      viewport={{ once: false, amount: 0.12, margin: '600px 0px -40px 0px' }}
-      transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
+      viewport={{ once: true, amount: 0.08 }}
+      transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
       className={className}
     >
       {children}
