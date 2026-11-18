@@ -3157,25 +3157,7 @@ a.chip:hover { background: #facc15; color: #0f2438; border-color: #eab308; trans
   .scenic-photo-img,
   .hero-bg-img,
   .mist-a,
-  .mist-b,
-  .anim-smoke-1,
-  .anim-smoke-2,
-  .anim-glow,
-  .anim-sway-trees,
-  .anim-deer-head,
-  .anim-bob-1,
-  .anim-bob-2,
-  .anim-spin-slow,
-  .anim-spin-turbine,
-  .anim-cloud-drift-1,
-  .anim-cloud-drift-2,
-  .anim-birds-fly,
-  .anim-crane-fly,
-  .anim-wing,
-  .anim-wing-back,
-  .anim-wing-center,
-  .anim-bubble-1,
-  .anim-bubble-2 {
+  .mist-b {
     animation: none !important;
   }
   .action-garden-card {
