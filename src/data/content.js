@@ -208,8 +208,8 @@ export const OCEAN = {
       name: { id: 'Penyu', en: 'Sea turtles' },
       text: { id: 'Salah mengira kantong plastik sebagai ubur-ubur, lalu tersumbat pencernaannya.', en: 'Mistake plastic bags for jellyfish and suffer blocked digestion.' },
       detail: {
-        id: 'Lebih dari separuh penyu laut di dunia diperkirakan pernah menelan sampah plastik. Kantong plastik yang mengapung terlihat persis seperti ubur-ubur, makanan utama penyu.',
-        en: 'Over half of the world\'s sea turtles are estimated to have ingested plastic debris. Floating bags closely resemble jellyfish, their natural prey.',
+        id: 'Lebih dari separuh penyu laut di dunia diperkirakan pernah menelan sampah plastik. Kantong plastik yang mengapung terlihat persis seperti ubur-ubur, makanan utama penyu. Plastik yang menumpuk di lambung menimbulkan rasa kenyang palsu, menyumbat usus, hingga membuat penyu lemas dan gagal bertelur di pantai.',
+        en: 'Over half of the world\'s sea turtles are estimated to have ingested plastic debris. Floating bags closely resemble jellyfish, their natural prey. Accumulated plastic creates false fullness, blocks the digestive tract, and leaves turtles too weak to swim or nest safely.',
       },
     },
     {
@@ -219,8 +219,8 @@ export const OCEAN = {
       name: { id: 'Plankton', en: 'Plankton' },
       text: { id: 'Menelan mikroplastik dan membawanya naik ke seluruh rantai makanan laut.', en: 'Swallow microplastics and carry them up the whole marine food chain.' },
       detail: {
-        id: 'Zooplankton menelan partikel mikroplastik berukuran mikrometer. Ketika plankton dimakan ikan kecil, lalu ikan besar, konsentrasi mikroplastik dan racunnya ikut berpindah hingga ke meja makan manusia.',
-        en: 'Zooplankton ingest micron-sized plastic particles. As small fish eat plankton and larger predators eat them, microplastics bioaccumulate up to human plates.',
+        id: 'Zooplankton menelan partikel mikroplastik berukuran mikrometer karena ukurannya mirip fitoplankton. Ketika plankton dimakan ikan kecil, lalu ikan predator besar, konsentrasi mikroplastik dan bahan kimia beracunnya mengalami bioakumulasi hingga berujung di meja makan manusia.',
+        en: 'Zooplankton ingest micron-sized plastic particles that mimic natural phytoplankton. As small fish eat plankton and larger predators feed on them, microplastics and absorbed toxins bioaccumulate up the food web all the way to human plates.',
       },
     },
     {
@@ -230,8 +230,8 @@ export const OCEAN = {
       name: { id: 'Terumbu karang', en: 'Coral reefs' },
       text: { id: 'Plastik yang menyangkut meningkatkan risiko penyakit karang secara drastis.', en: 'Plastic draped on corals greatly raises disease risk.' },
       detail: {
-        id: 'Studi menunjukkan kemungkinan terumbu karang terkena penyakit melonjak dari 4% menjadi 89% ketika bersentuhan dengan sampah plastik karena luka fisik, terhalangnya cahaya, dan bakteri patogen.',
-        en: 'Research shows disease likelihood on coral reefs jumps from 4% to 89% when in contact with plastic debris due to abrasion, light deprivation and pathogens.',
+        id: 'Studi menunjukkan kemungkinan terumbu karang terkena penyakit melonjak dari 4% menjadi 89% ketika bersentuhan dengan sampah plastik. Plastik menggores jaringan polip, menghalangi sinar matahari untuk fotosintesis alga simbiotik, serta membawa bakteri patogen mematikan bagi ekosistem rumah seperempat spesies laut ini.',
+        en: 'Research shows disease likelihood on coral reefs jumps from 4% to 89% when in contact with plastic debris. Plastic abrades coral tissue, blocks sunlight needed by symbiotic algae, and delivers harmful pathogens to an ecosystem supporting a quarter of all marine life.',
       },
     },
     {
@@ -241,8 +241,8 @@ export const OCEAN = {
       name: { id: 'Paus & lumba-lumba', en: 'Whales & dolphins' },
       text: { id: 'Terjerat jaring hantu dan menelan sampah plastik saat mencari makan.', en: 'Tangled in ghost nets and swallow plastic while feeding.' },
       detail: {
-        id: 'Mamalia laut menyaring ribuan liter air saat makan dan ikut menelan mikroplastik serta sampah kemasan, selain terancam alat tangkap ikan bekas (ghost gear) yang terbuang di samudra.',
-        en: 'Filter-feeding whales take in thousands of litres of water along with plastic debris, while discarded ghost fishing nets trap whales and dolphins.',
+        id: 'Mamalia laut penyaring seperti paus balin menelan ribuan liter air setiap kali makan sehingga ikut menyaring mikroplastik dan sampah kemasan. Di sisi lain, alat tangkap ikan bekas yang terbengkalai (ghost gear) terus menjerat lumba-lumba dan paus, melukai sirip, dan menghalangi mereka naik ke permukaan untuk bernapas.',
+        en: 'Filter-feeding whales take in thousands of litres of water per gulp, inevitably swallowing microplastics and packaging debris. Meanwhile, discarded ghost fishing nets entangle dolphins and whales, cutting into fins and preventing them from surfacing to breathe.',
       },
     },
   ],

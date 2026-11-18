@@ -151,7 +151,6 @@ export default function MarineCreatureMap({ species, lang, chapterTitle, onOpenD
             </div>
             <h4>{active.name[lang]}</h4>
             <p className="marine-spotlight-summary">{active.text[lang]}</p>
-            {active.detail && <p className="marine-spotlight-detail">{active.detail[lang]}</p>}
             <div className="marine-spotlight-foot">
               <span className="marine-depth-chip">
                 {lang === 'id' ? 'Kedalaman:' : 'Depth:'} <strong>{activeMeta.depth}</strong>
@@ -164,8 +163,8 @@ export default function MarineCreatureMap({ species, lang, chapterTitle, onOpenD
                     image: active.image,
                     badge: active.status[lang],
                     title: active.name[lang],
-                    subtitle: `${chapterTitle} • ${activeMeta.zone[lang]}`,
-                    text: `${active.text[lang]} ${active.detail ? active.detail[lang] : ''}`,
+                    subtitle: `${chapterTitle} • ${activeMeta.zone[lang]} (${activeMeta.depth})`,
+                    text: active.detail ? active.detail[lang] : active.text[lang],
                   })
                 }
               >
