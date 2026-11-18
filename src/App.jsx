@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 import { motion, AnimatePresence, useScroll, useSpring, useMotionValue } from 'motion/react';
 import {
   Globe2,
@@ -26,14 +26,24 @@ import {
 } from 'lucide-react';
 import { UI, HERO, ABOUT, CLIMATE, OCEAN, FOREST, ACTION } from './data/content';
 import HeroSection from './components/HeroSection';
-import AboutPopUpBook from './components/AboutPopUpBook';
-import SceneStage from './components/SceneStage';
-import { LineChart, GlacierCompare } from './components/Charts';
-import PlasticQuiz from './components/PlasticQuiz';
-import ForestFanDeck from './components/ForestFanDeck';
-import MarineCreatureMap from './components/MarineCreatureMap';
-import ActionGarden from './components/ActionGarden';
-import TeamLanyardCards from './components/TeamLanyardCards';
+import RawAboutPopUpBook from './components/AboutPopUpBook';
+import RawSceneStage from './components/SceneStage';
+import { LineChart as RawLineChart, GlacierCompare as RawGlacierCompare } from './components/Charts';
+import RawPlasticQuiz from './components/PlasticQuiz';
+import RawForestFanDeck from './components/ForestFanDeck';
+import RawMarineCreatureMap from './components/MarineCreatureMap';
+import RawActionGarden from './components/ActionGarden';
+import RawTeamLanyardCards from './components/TeamLanyardCards';
+
+const AboutPopUpBook = memo(RawAboutPopUpBook);
+const SceneStage = memo(RawSceneStage);
+const LineChart = memo(RawLineChart);
+const GlacierCompare = memo(RawGlacierCompare);
+const PlasticQuiz = memo(RawPlasticQuiz);
+const ForestFanDeck = memo(RawForestFanDeck);
+const MarineCreatureMap = memo(RawMarineCreatureMap);
+const ActionGarden = memo(RawActionGarden);
+const TeamLanyardCards = memo(RawTeamLanyardCards);
 import { VectorArt } from './components/VectorArt';
 import { ScrollReveal } from './components/ScrollChoreo';
 
@@ -554,14 +564,18 @@ export default function App() {
     return () => obs.disconnect();
   }, []);
 
-  const go = (id) => {
+  const go = useCallback((id) => {
     setMenu(false);
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-  };
+  }, []);
 
-  const toggleTip = (key) => {
+  const toggleTip = useCallback((key) => {
     setCheckedTips((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
+  }, []);
+
+  const resetTips = useCallback(() => {
+    setCheckedTips({});
+  }, []);
 
   const h = HERO[slide];
   const reg = FOREST.regions.find((r) => r.k === region);
@@ -918,7 +932,7 @@ export default function App() {
             groups={ACTION.groups}
             checkedTips={checkedTips}
             onToggleTip={toggleTip}
-            onResetTips={() => setCheckedTips({})}
+            onResetTips={resetTips}
             lang={L}
           />
 

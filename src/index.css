@@ -675,7 +675,12 @@ section { position: relative; }
 .scenic-ocean .scenic-dot { background: rgba(255, 255, 255, 0.9); box-shadow: 0 0 12px rgba(14, 165, 233, 0.7); }
 .scenic-forest .scenic-dot { background: #fde047; box-shadow: 0 0 12px rgba(34, 197, 94, 0.65); }
 
-.chapter, .action { padding: 100px 0; overflow-x: clip; }
+.chapter, .action {
+  padding: 100px 0;
+  overflow-x: clip;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 760px;
+}
 .chapter-glow {
   position: absolute;
   top: 0;
@@ -3145,7 +3150,27 @@ a.chip:hover { background: #facc15; color: #0f2438; border-color: #eab308; trans
     -webkit-backdrop-filter: none;
     background: rgba(255, 255, 255, 0.97);
   }
-  .scenic-photo-layer {
+  .scenic-photo-layer,
+  .hero-bg-img,
+  .mist-drift-a,
+  .mist-drift-b,
+  .smoke-1,
+  .smoke-2,
+  .cabin-glow,
+  .tree-sway,
+  .deer-head,
+  .gentle-bob,
+  .gentle-bob-slow,
+  .sun-rays-spin,
+  .wind-blades,
+  .cloud-drift,
+  .cloud-drift-slow,
+  .birds-fly,
+  .crane-glide,
+  .crane-wing-1,
+  .crane-wing-2,
+  .bubble-rise,
+  .bubble-rise-slow {
     animation: none;
   }
   .action-garden-card {
@@ -3248,6 +3273,8 @@ a.chip:hover { background: #facc15; color: #0f2438; border-color: #eab308; trans
   z-index: 2;
   padding: 92px 0 0;
   overflow-x: clip;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 720px;
 }
 .contact-head {
   margin-inline: auto;

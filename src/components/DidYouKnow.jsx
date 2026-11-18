@@ -39,18 +39,9 @@ export default function DidYouKnow({ facts, lang, accent = '#f97316' }) {
           animate={
             zoomed
               ? { x: 4, y: -4, scale: 1.14, rotate: -6 }
-              : {
-                  x: [-10, 12, -4, 10, -10],
-                  y: [-5, 7, 3, -6, -5],
-                  rotate: [-8, 6, -3, 7, -8],
-                  scale: 1,
-                }
+              : { x: 0, y: 0, rotate: 0, scale: 1 }
           }
-          transition={
-            zoomed
-              ? { type: 'spring', stiffness: 260, damping: 18 }
-              : { duration: 6.5, repeat: Infinity, ease: 'easeInOut' }
-          }
+          transition={{ type: 'spring', stiffness: 260, damping: 18 }}
         >
           <svg viewBox="0 0 64 64" className="dyk-lens-svg">
             {/* Gagang lensa */}
