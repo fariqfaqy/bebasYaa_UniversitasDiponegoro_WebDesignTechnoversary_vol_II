@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 
-const toDisplay = (v) => (v <= 0.005 ? 'none' : 'block');
+const toVisibility = (v) => (v <= 0.005 ? 'hidden' : 'visible');
 
 /* =========================================================================
    KOMPONEN ORIGAMI PRESISI (Simetris, Utuh, & Berfaset Lipatan Kertas)
@@ -385,7 +385,7 @@ export default function SceneStage({ mouseX, mouseY, heroKey = 'climate' }) {
 
   // --- SCENE 1: HERO (0.00 -> 0.17) ---
   const s1Opacity = useTransform(scrollYProgress, [0, 0.11, 0.17], [1, 1, 0]);
-  const s1Display = useTransform(s1Opacity, toDisplay);
+  const s1Vis = useTransform(s1Opacity, toVisibility);
   const s1MountainY = useTransform(scrollYProgress, [0, 0.17], [0, 85]);
   const s1MountainScale = useTransform(scrollYProgress, [0, 0.17], [1.02, 1.12]);
   const s1CabinY = useTransform(scrollYProgress, [0, 0.16], [0, 195]);
@@ -396,7 +396,7 @@ export default function SceneStage({ mouseX, mouseY, heroKey = 'climate' }) {
 
   // --- SCENE 2: TENTANG (0.11 -> 0.31) ---
   const s2Opacity = useTransform(scrollYProgress, [0.1, 0.16, 0.25, 0.31], [0, 1, 1, 0]);
-  const s2Display = useTransform(s2Opacity, toDisplay);
+  const s2Vis = useTransform(s2Opacity, toVisibility);
   const s2FarY = useTransform(scrollYProgress, [0.1, 0.17, 0.25, 0.31], [85, 0, 0, -55]);
   const s2MidY = useTransform(scrollYProgress, [0.11, 0.18, 0.25, 0.31], [140, 0, 0, -80]);
   const s2TreesX = useTransform(scrollYProgress, [0.11, 0.18, 0.25, 0.31], [-70, 0, 0, 70]);
@@ -404,7 +404,7 @@ export default function SceneStage({ mouseX, mouseY, heroKey = 'climate' }) {
 
   // --- SCENE 3: BAB 1 IKLIM & ES (0.25 -> 0.54) ---
   const s3Opacity = useTransform(scrollYProgress, [0.24, 0.31, 0.48, 0.54], [0, 1, 1, 0]);
-  const s3Display = useTransform(s3Opacity, toDisplay);
+  const s3Vis = useTransform(s3Opacity, toVisibility);
   const s3PeaksY = useTransform(scrollYProgress, [0.24, 0.32, 0.48, 0.54], [90, 0, 0, -50]);
   const s3ChaletY = useTransform(scrollYProgress, [0.25, 0.33, 0.48, 0.54], [135, 0, 0, -75]);
   const s3ChaletScale = useTransform(scrollYProgress, [0.25, 0.34], [1.08, 1]);
@@ -415,7 +415,7 @@ export default function SceneStage({ mouseX, mouseY, heroKey = 'climate' }) {
 
   // --- SCENE 4: BAB 2 LAUTAN (0.48 -> 0.72) ---
   const s4Opacity = useTransform(scrollYProgress, [0.47, 0.53, 0.66, 0.72], [0, 1, 1, 0]);
-  const s4Display = useTransform(s4Opacity, toDisplay);
+  const s4Vis = useTransform(s4Opacity, toVisibility);
   const s4FarY = useTransform(scrollYProgress, [0.48, 0.55, 0.66, 0.72], [75, 0, 0, -45]);
   const s4WhaleX = useTransform(scrollYProgress, [0.48, 0.56, 0.66, 0.72], [-120, 0, 0, 110]);
   const s4WhaleY = useTransform(scrollYProgress, [0.48, 0.56, 0.66, 0.72], [125, 0, 0, -65]);
@@ -424,7 +424,7 @@ export default function SceneStage({ mouseX, mouseY, heroKey = 'climate' }) {
 
   // --- SCENE 5: BAB 3 HUTAN (0.66 -> 0.89) ---
   const s5Opacity = useTransform(scrollYProgress, [0.65, 0.71, 0.83, 0.89], [0, 1, 1, 0]);
-  const s5Display = useTransform(s5Opacity, toDisplay);
+  const s5Vis = useTransform(s5Opacity, toVisibility);
   const s5ForestY = useTransform(scrollYProgress, [0.66, 0.73, 0.86], [70, 0, -35]);
   const s5TowerY = useTransform(scrollYProgress, [0.66, 0.74, 0.83, 0.89], [145, 0, 0, 155]);
   const s5DeerY = useTransform(scrollYProgress, [0.67, 0.75, 0.83, 0.89], [175, 0, 0, 185]);
@@ -433,7 +433,7 @@ export default function SceneStage({ mouseX, mouseY, heroKey = 'climate' }) {
 
   // --- SCENE 6: AKSI NYATA (0.83 -> 1.00) ---
   const s6Opacity = useTransform(scrollYProgress, [0.83, 0.89], [0, 1]);
-  const s6Display = useTransform(s6Opacity, toDisplay);
+  const s6Vis = useTransform(s6Opacity, toVisibility);
   const s6SunScale = useTransform(scrollYProgress, [0.83, 0.96], [0.85, 1.03]);
   const s6HillsY = useTransform(scrollYProgress, [0.83, 0.93], [100, 0]);
   const s6VillaY = useTransform(scrollYProgress, [0.84, 0.95], [150, 0]);
@@ -444,7 +444,7 @@ export default function SceneStage({ mouseX, mouseY, heroKey = 'climate' }) {
       {/* =====================================================================
           SCENE 2: TENTANG
       ====================================================================== */}
-      <motion.div style={{ opacity: s2Opacity, display: s2Display }} className="stage-scene scene-bg-about">
+      <motion.div style={{ opacity: s2Opacity, visibility: s2Vis }} className="stage-scene scene-bg-about">
         <motion.div style={{ y: s2FarY, x: bgTiltX }} className="stage-layer">
           <svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMax slice" className="stage-svg">
             <g transform="translate(250, 190)">
@@ -493,7 +493,7 @@ export default function SceneStage({ mouseX, mouseY, heroKey = 'climate' }) {
       {/* =====================================================================
           SCENE 1: HERO (Crossfade mulus tanpa mode="wait")
       ====================================================================== */}
-      <motion.div style={{ opacity: s1Opacity, display: s1Display }} className="stage-scene scene-bg-hero-base">
+      <motion.div style={{ opacity: s1Opacity, visibility: s1Vis }} className="stage-scene scene-bg-hero-base">
         <AnimatePresence initial={false}>
           {heroKey === 'climate' && (
             <motion.div
@@ -636,7 +636,7 @@ export default function SceneStage({ mouseX, mouseY, heroKey = 'climate' }) {
       {/* =====================================================================
           SCENE 3: BAB 1 IKLIM & ES
       ====================================================================== */}
-      <motion.div style={{ opacity: s3Opacity, display: s3Display }} className="stage-scene scene-bg-climate">
+      <motion.div style={{ opacity: s3Opacity, visibility: s3Vis }} className="stage-scene scene-bg-climate">
         <motion.div style={{ y: s3PeaksY, x: bgTiltX }} className="stage-layer">
           <svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMax slice" className="stage-svg">
             <polygon points="1140,120 1190,145 1210,195 1185,245 1135,265 1085,240 1065,190 1090,140" fill="#fde047" opacity="0.7" />
@@ -698,7 +698,7 @@ export default function SceneStage({ mouseX, mouseY, heroKey = 'climate' }) {
       {/* =====================================================================
           SCENE 4: BAB 2 LAUTAN
       ====================================================================== */}
-      <motion.div style={{ opacity: s4Opacity, display: s4Display }} className="stage-scene scene-bg-ocean">
+      <motion.div style={{ opacity: s4Opacity, visibility: s4Vis }} className="stage-scene scene-bg-ocean">
         <motion.div style={{ y: s4FarY, x: bgTiltX }} className="stage-layer">
           <svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMax slice" className="stage-svg">
             <polygon points="220,0 320,0 520,800 80,800" fill="#ffffff" opacity="0.2" />
@@ -762,7 +762,7 @@ export default function SceneStage({ mouseX, mouseY, heroKey = 'climate' }) {
       {/* =====================================================================
           SCENE 5: BAB 3 HUTAN
       ====================================================================== */}
-      <motion.div style={{ opacity: s5Opacity, display: s5Display }} className="stage-scene scene-bg-forest">
+      <motion.div style={{ opacity: s5Opacity, visibility: s5Vis }} className="stage-scene scene-bg-forest">
         <motion.div style={{ y: s5ForestY, x: bgTiltX }} className="stage-layer">
           <svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMax slice" className="stage-svg">
             <polygon points="180,0 280,0 520,800 60,800" fill="#fef08a" opacity="0.28" />
@@ -814,7 +814,7 @@ export default function SceneStage({ mouseX, mouseY, heroKey = 'climate' }) {
       {/* =====================================================================
           SCENE 6: AKSI NYATA
       ====================================================================== */}
-      <motion.div style={{ opacity: s6Opacity, display: s6Display }} className="stage-scene scene-bg-action">
+      <motion.div style={{ opacity: s6Opacity, visibility: s6Vis }} className="stage-scene scene-bg-action">
         <motion.div style={{ y: s6HillsY, scale: s6SunScale, x: bgTiltX }} className="stage-layer">
           <svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMax slice" className="stage-svg">
             <g transform="translate(720, 250)">
